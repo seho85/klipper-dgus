@@ -1,0 +1,1 @@
+CONFIG_DIRECTORY = "/home/sebastian/python-workspace/vyper-display/klipper_dgus/config"
