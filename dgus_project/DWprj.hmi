@@ -1,0 +1,15 @@
+[INIT]
+PICFIX=1
+VARCount=64
+Version=-1
+SCREENDSIZE=480X800
+SPADDRESS=5000
+[IMG]
+00=00_Overview.bmp
+01=01_Axes.bmp
+03=03_Tuning.bmp
+04=04_Extruder.bmp
+05=05_Fan.bmp
+30=30_Main_Menu.bmp
+40=40_Keyboard_Numeric.bmp
+50=50_Startup.bmp
