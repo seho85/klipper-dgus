@@ -3,22 +3,127 @@
       "ip": "10.0.1.69",
       "port": 7125,
       "printer_objects": {
-         "extruder": null,
-         "heater_bed": null
+         "extruder": [
+            "temperature",
+            "target"
+         ],
+         "heater_bed": [
+            "temperature",
+            "target"
+         ],
+         "virtual_sdcard": [
+            "progress"
+         ],
+         "print_stats": [
+            "print_duration",
+            "state"
+         ],
+         "motion_report": [
+            "live_position",
+            "live_velocity",
+            "live_extruder_velocity"
+         ],
+         "toolhead": null
       },
       "data_model": {
+         "virtual_sdcard": {
+            "progress": 0.0
+         },
+         "motion_report": {
+            "live_position": [
+               175.5,
+               100.0,
+               10.0,
+               0.0
+            ],
+            "live_velocity": 0.0,
+            "live_extruder_velocity": 0.0
+         },
+         "print_stats": {
+            "state": "standby",
+            "print_duration": 0.0
+         },
+         "toolhead": {
+            "square_corner_velocity": 5.0,
+            "max_accel": 1500.0,
+            "homed_axes": "",
+            "estimated_print_time": 4703.481933152778,
+            "max_velocity": 150.0,
+            "print_time": 1024.9452958333331,
+            "max_accel_to_decel": 1500.0,
+            "axis_minimum": [
+               -3.0,
+               -10.0,
+               -5.0,
+               0.0
+            ],
+            "stalls": 0,
+            "axis_maximum": [
+               260.0,
+               250.0,
+               260.0,
+               0.0
+            ],
+            "position": [
+               175.5,
+               100.0,
+               10.0,
+               0.0
+            ],
+            "extruder": "extruder"
+         },
          "heater_bed": {
-            "temperature": 21.88,
-            "power": 0.0,
+            "temperature": 23.3,
             "target": 0.0
          },
          "extruder": {
-            "pressure_advance": 0.0,
-            "target": 0.0,
-            "power": 0.0,
-            "can_extrude": false,
-            "smooth_time": 0.04,
-            "temperature": 33.72
+            "temperature": 24.08,
+            "target": 0.0
+         },
+         "server_info": {
+            "klippy_connected": true,
+            "klippy_state": "ready",
+            "components": [
+               "klippy_connection",
+               "application",
+               "websockets",
+               "internal_transport",
+               "dbus_manager",
+               "database",
+               "file_manager",
+               "klippy_apis",
+               "shell_command",
+               "machine",
+               "data_store",
+               "proc_stats",
+               "job_state",
+               "job_queue",
+               "http_client",
+               "announcements",
+               "extensions",
+               "authorization",
+               "octoprint_compat",
+               "history",
+               "update_manager"
+            ],
+            "failed_components": [],
+            "registered_directories": [
+               "config",
+               "logs",
+               "gcodes",
+               "config_examples",
+               "docs"
+            ],
+            "warnings": [],
+            "websocket_count": 4,
+            "moonraker_version": "v0.7.1-547-gd3003a1-dirty",
+            "missing_klippy_requirements": [],
+            "api_version": [
+               1,
+               0,
+               5
+            ],
+            "api_version_string": "1.0.5"
          }
       }
    }
