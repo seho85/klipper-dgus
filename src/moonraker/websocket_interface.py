@@ -1,21 +1,27 @@
-from ntpath import join
 import os
 import json
-from threading import Thread
+from threading import Thread, Lock
+from time import sleep
 from websocket import WebSocketApp
 from jsonmerge import merge
 
+
 from dgus.display.serialization.json_serializable import JsonSerializable
 from globals import CONFIG_DIRECTORY
+from moonraker.request_id import WebsocktRequestId
 
 class WebsocketInterface(JsonSerializable):
     ws_app : WebSocketApp
     thread : Thread
+    cyclic_query_thread : Thread
     open : bool = False
     printer_ip = "1.2.3.4"
     port = 7125
     json_data_modell = {}
+    server_info = {}
+    cyclic_query_thread_running = False
 
+    json_resouce_lock = Lock()
 
     query_req = {
         "jsonrpc": "2.0",
@@ -26,7 +32,7 @@ class WebsocketInterface(JsonSerializable):
                 "heater_bed": None
             }
         },
-        "id": 1234
+        "id": WebsocktRequestId.QUERY_PRINTER_OBJECTS
     }
 
 
@@ -39,7 +45,7 @@ class WebsocketInterface(JsonSerializable):
                 "extruder": None
             }
         },
-        "id": 5434
+        "id": WebsocktRequestId.SUBSCRIBE_REQUEST
     }
 
 
@@ -83,14 +89,42 @@ class WebsocketInterface(JsonSerializable):
     def start(self):
         self.thread = Thread(target=self.ws_app.run_forever)
         self.thread.start()
-        #self.ws.run_forever()
+        self.cyclic_query_thread_running = True
+        self.cyclic_query_thread = Thread(target=self.cyclic_query_thread_function)
+        self.cyclic_query_thread.start()
+        
+
+    def cyclic_query_thread_function(self):
+        while self.cyclic_query_thread_running:
+            
+            if self.open:
+            
+                query_server_info_json = {
+                    "jsonrpc": "2.0",
+                    "method": "server.info",
+                    "id": WebsocktRequestId.QUERY_SERVER_INFO
+                }
+
+                print("send cyclic query...")
+
+            
+                self.ws_app.send(json.dumps(query_server_info_json))
+
+            sleep(1)
 
     
     def stop(self):
+        self.cyclic_query_thread_running = False
+        self.cyclic_query_thread.join()
+        print("Stopped cyclic query thread...")
+        
         self.ws_app.close()
         self.thread.join()
-        
         print("Stopped Websocket Communication....")
+
+        
+        
+        
 
         
         
@@ -108,29 +142,44 @@ class WebsocketInterface(JsonSerializable):
 
     def ws_on_message(self, ws_app, msg):
         response = json.loads(msg)
-        #print(json.dumps(response, indent=2))
+        #print(json.dumps(response, indent=3))
         #global json_data_modell
 
         if 'id' in response:
             # Response to our query data request 
-            if response["id"] == 1234:
+            if response["id"] == WebsocktRequestId.QUERY_PRINTER_OBJECTS:
                 #print(json.dumps(response, indent=2))
-        
-                self.json_data_modell = response["result"]["status"]
+                with self.json_resouce_lock:
+                    json_merged = merge(self.json_data_modell, response["result"]["status"])
+                    self.json_data_modell = json_merged
 
                 print(json.dumps(self.json_data_modell, indent=3))
             
                 self.add_subscription(ws_app)
+
+            if response["id"] == WebsocktRequestId.QUERY_SERVER_INFO:
+                #print(json.dumps(response, indent=3))
+                #self.server_info = response["resut"]
+                with self.json_resouce_lock:
+                    json_merged = merge(self.json_data_modell["server_info"],response["result"] )
+                    self.json_data_modell["server_info"] = json_merged
+
+                    print(json.dumps(response, indent=3))
+
+            if response["id"] == 5555:
+                print(json.dumps(response, indent=3))
             
         
         # Subscribed printer objects are send with method: "notifiy_status_update"
         # The subscribed objects are only published when the value has changed.
         # e.g. bed_temperature target set to 50°, extruder temperature has changed, bed_temperature has changed, a.s.o.
         if response['method'] == "notify_status_update":
+            print(json.dumps(response, indent=2))
             #TODO: Resource locking - possible data race!
             json_pub_data = response["params"][0]
             json_merged = merge(self.json_data_modell, json_pub_data)
-            self.json_data_modell = json_merged
+            with self.json_resouce_lock:
+                self.json_data_modell = json_merged
             #print(json.dumps(json_merged, indent=2))
 
 
@@ -166,6 +215,19 @@ class WebsocketInterface(JsonSerializable):
         with open(websocket_json_config) as json_file:
             json_data = json.load(json_file)
             return self.from_json(json_data)
+
+    def get_klipper_data(self, klipper_data : list, array_index : int = -1):
+        with self.json_resouce_lock:
+            json_obj = self.json_data_modell
+            for dp in klipper_data:
+                json_obj = json_obj.get(dp)
+                if json_obj is None:
+                    print(f"Error Invalid Klipper Data {klipper_data}")
+                    return None
+
+            if array_index >= 0:
+                json_obj = json_obj[array_index]
+            return json_obj
 
 
     #JsonSerializable implementation
