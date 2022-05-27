@@ -4,11 +4,13 @@ from threading import Thread, Lock
 from time import sleep
 from websocket import WebSocketApp
 from jsonmerge import merge
-
+from queue import Queue
 
 from dgus.display.serialization.json_serializable import JsonSerializable
 from globals import CONFIG_DIRECTORY
 from moonraker.request_id import WebsocktRequestId
+from moonraker.moonraker_request import MoonrakerRequest
+
 
 class WebsocketInterface(JsonSerializable):
     ws_app : WebSocketApp
@@ -22,6 +24,9 @@ class WebsocketInterface(JsonSerializable):
     cyclic_query_thread_running = False
 
     json_resouce_lock = Lock()
+
+    _requests : Queue = Queue()
+    _current_request : MoonrakerRequest = None
 
     query_req = {
         "jsonrpc": "2.0",
@@ -110,6 +115,12 @@ class WebsocketInterface(JsonSerializable):
             
                 self.ws_app.send(json.dumps(query_server_info_json))
 
+                if not self._requests.empty():
+                    if self._current_request is None:
+                        self._current_request = self._requests.get()
+                        self.ws_app.send(json.dumps(self._current_request.request))
+                        self._current_request.request_was_send_callback()
+
             sleep(1)
 
     
@@ -153,7 +164,7 @@ class WebsocketInterface(JsonSerializable):
                     json_merged = merge(self.json_data_modell, response["result"]["status"])
                     self.json_data_modell = json_merged
 
-                print(json.dumps(self.json_data_modell, indent=3))
+                #print(json.dumps(self.json_data_modell, indent=3))
             
                 self.add_subscription(ws_app)
 
@@ -164,22 +175,31 @@ class WebsocketInterface(JsonSerializable):
                     json_merged = merge(self.json_data_modell["server_info"],response["result"] )
                     self.json_data_modell["server_info"] = json_merged
 
-                    print(json.dumps(response, indent=3))
+                    #print(json.dumps(response, indent=3))
 
             if response["id"] == 5555:
                 print(json.dumps(response, indent=3))
+
+
+            if self._current_request is not None:
+                if response["id"] == self._current_request.request["id"]:
+                    self._current_request.response_received_callback(response)
+                    self._current_request = None
             
         
         # Subscribed printer objects are send with method: "notifiy_status_update"
         # The subscribed objects are only published when the value has changed.
         # e.g. bed_temperature target set to 50°, extruder temperature has changed, bed_temperature has changed, a.s.o.
         if response['method'] == "notify_status_update":
-            print(json.dumps(response, indent=2))
+            #print(json.dumps(response, indent=2))
             #TODO: Resource locking - possible data race!
             json_pub_data = response["params"][0]
             json_merged = merge(self.json_data_modell, json_pub_data)
             with self.json_resouce_lock:
                 self.json_data_modell = json_merged
+
+            
+            print(json.dumps(self.json_data_modell["toolhead"]["homed_axes"], indent=3))
             #print(json.dumps(json_merged, indent=2))
 
 
@@ -230,6 +250,8 @@ class WebsocketInterface(JsonSerializable):
             return json_obj
 
 
+    def queue_request(self, request : MoonrakerRequest):
+        self._requests.put(request)
     #JsonSerializable implementation
 
     def from_json(self, json_data : dict):

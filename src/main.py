@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import imp
 import json
 from signal import signal, SIGINT
 from time import sleep
@@ -10,6 +11,7 @@ from dgus.display.mask import Mask
 
 from overview_display_mask import OverviewDisplayMask
 from axes_display_mask import AxesDisplayMask
+from homeing_mask import HomeingDisplayMask
 
 from moonraker.websocket_interface import WebsocketInterface
 
@@ -79,7 +81,7 @@ if __name__ == "__main__":
     mainMenuMask = Mask(30, serial_com)
     display.add_mask(mainMenuMask)
 
-    axesMask =  AxesDisplayMask(serial_com, websock)
+    axesMask =  AxesDisplayMask(serial_com, websock, display)
     display.add_mask(axesMask)
 
     tuningMask = Mask(3, serial_com)
@@ -90,6 +92,9 @@ if __name__ == "__main__":
 
     fanMask = Mask(5, serial_com)
     display.add_mask(fanMask)
+
+    homeingInProgress = HomeingDisplayMask(51, serial_com, websock)
+    display.add_mask(homeingInProgress)
 
 
     if serial_com.start_com_thread():

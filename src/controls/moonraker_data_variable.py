@@ -28,12 +28,12 @@ class MoonrakerDataVariable(DataVariable):
     def value_to_fixed_point(self, data, decimal_places):
 
         if self.klipper_value_type == KlipperValueType.PERCENTAGE:
-            print(f"value ori: {data} value_scaled{float(data)*100}")
+            #print(f"value ori: {data} value_scaled{float(data)*100}")
             data = float(data) * 100
 
         temp_float = float(data) * pow(10, decimal_places)
 
-        print(f'data var: {temp_float}')
+        #print(f'data var: {temp_float}')
 
         
         return int(temp_float)

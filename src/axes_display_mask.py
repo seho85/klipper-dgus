@@ -2,26 +2,25 @@ from json import dumps
 from dgus.display.communication.request import Request
 from dgus.display.mask import Mask
 from dgus.display.communication.communication_interface import SerialCommunication
+from dgus.display.display import Display
 from controls.moonraker_data_variable import MoonrakerDataVariable
 from moonraker.websocket_interface import WebsocketInterface
 from dgus.display.communication.protocol import build_write_vp
 from keycodes import KeyCodes
+from moonraker.moonraker_request import MoonrakerRequest
 
 class AxesDisplayMask(Mask):
     
     web_socket : WebsocketInterface = None
-
+    display : Display = None
     distance : int = 10
 
 
-    def __init__(self, com_interface: SerialCommunication, web_sock : WebsocketInterface) -> None:
+    def __init__(self, com_interface: SerialCommunication, web_sock : WebsocketInterface, display : Display) -> None:
         super().__init__(1, com_interface)
         self.web_socket = web_sock
+        self.display = display
 
-        com_interface.register_spontaneous_callback(0x0005, self.move_distance_changed)
-        com_interface.register_spontaneous_callback(0x0012, self.key_pressed)
-
-    
         self.xpos = MoonrakerDataVariable(self._com_interface, 0x2030, 2, 0xffff, self.web_socket)
         #self.xpos.set_klipper_data(["toolhead", "position"], 0)
         self.xpos.set_klipper_data(["motion_report", "live_position"], 0)
@@ -36,6 +35,9 @@ class AxesDisplayMask(Mask):
         #self.zpos.set_klipper_data(["toolhead", "position"], 2)
         self.zpos.set_klipper_data(["motion_report", "live_position"], 2)
         self.controls.append(self.zpos)
+
+        com_interface.register_spontaneous_callback(0x0005, self.move_distance_changed)
+        com_interface.register_spontaneous_callback(0x0012, self.key_pressed)
 
     def move_distance_changed(self, data):
         response_payload = data[7:]
@@ -71,11 +73,24 @@ class AxesDisplayMask(Mask):
         response_payload = data[7:]
         keycode = int.from_bytes(response_payload, byteorder='big')
 
-        print(f'keycode: {keycode}')
-        
+        #print(f'keycode: {keycode}')
 
-        move_key_pressed = False
-        home_key_pressed = False
+        if self.is_keycode_a_move_key(keycode):
+            self.perform_move(keycode)
+
+        if self.is_keycode_a_home_key(keycode):
+            self.perform_homing()
+
+
+    def is_keycode_a_move_key(self, key_code):
+        is_a_movex_key = key_code == KeyCodes.MoveXMinus or key_code == KeyCodes.MoveXPlus
+        is_a_movey_key = key_code == KeyCodes.MoveYMinus or key_code == KeyCodes.MoveYPlus
+        is_a_movez_key = key_code == KeyCodes.MoveZMinus or key_code == KeyCodes.MoveZPlus
+
+        is_a_move_key = is_a_movex_key or is_a_movey_key or is_a_movez_key
+        return is_a_move_key
+
+    def perform_move(self, keycode):
         axe = "Y"
         move_sign = "-"
         move_distance = str(self.distance / 10)
@@ -85,69 +100,74 @@ class AxesDisplayMask(Mask):
             axe = "X"
             move_sign = "+"
             accell = 6000
-            move_key_pressed = True
 
         if keycode == KeyCodes.MoveXMinus:
             axe = "X"
             move_sign = "-"
             accell = 6000
-            move_key_pressed = True
 
         if keycode == KeyCodes.MoveYPlus:
             axe = "Y"
             move_sign = "+"
             accell = 6000
-            move_key_pressed = True
 
         if keycode == KeyCodes.MoveYMinus:
             axe = "Y"
             move_sign = "-"
             accell = 6000
-            move_key_pressed = True
 
         if keycode == KeyCodes.MoveZPlus:
             axe = "Z"
             move_sign = "+"
             accell = 1500
-            move_key_pressed = True
 
         if keycode == KeyCodes.MoveZMinus:
             axe = "Z"
             move_sign = "-"
             accell = 1500
-            move_key_pressed = True
 
-        if keycode == KeyCodes.HomeAll or keycode == KeyCodes.HomeXY or keycode == KeyCodes.HomeZ:
-            home_key_pressed = True
-            
-        if move_key_pressed:
-            print(f'G1 {axe}{move_sign}{move_distance} F{accell}')
+        #print(f'G1 {axe}{move_sign}{move_distance} F{accell}')
         
-        #G91
-        #G1 Z+0.1 F1500
-        #G90
+        move_cmd = {
+            "jsonrpc": "2.0",
+            "method": "printer.gcode.script",
+            "params": {
+                "script": f'G91\n G1 {axe}{move_sign}{move_distance} F{accell}\n G90',
+                                
+            },
+            "id": 5555
+        }
+        self.web_socket.ws_app.send(dumps(move_cmd))
 
-            move_cmd = {
-                "jsonrpc": "2.0",
-                "method": "printer.gcode.script",
-                "params": {
-                    "script": f'G91\n G1 {axe}{move_sign}{move_distance} F{accell}\n G90',
-                                    
-                },
-                "id": 5555
-            }
+    def is_keycode_a_home_key(self, keycode):
+        is_a_home_key = keycode == KeyCodes.HomeAll or keycode == KeyCodes.HomeXY or keycode == KeyCodes.HomeZ
 
-            self.web_socket.ws_app.send(dumps(move_cmd))
+        return is_a_home_key
 
-        if home_key_pressed:
-            home_cmd = {
-                "jsonrpc": "2.0",
-                "method": "printer.gcode.script",
-                "params": {
-                    "script": 'G28',
-                                    
-                },
-                "id": 5555
-            }
+    def perform_homing(self):
+        home_cmd = {
+            "jsonrpc": "2.0",
+            "method": "printer.gcode.script",
+            "params": {
+                "script": 'M18 X Y Z\n G28',
+                                
+            },
+            "id": 5555
+        }
 
-            self.web_socket.ws_app.send(dumps(home_cmd))
+        req = MoonrakerRequest(
+            request_was_send_callback=self.homing_request_send,
+            response_received_callback=self.home_request_finished,
+            request=home_cmd
+        )
+
+        self.web_socket.queue_request(req)
+
+    def homing_request_send(self):
+        print("Homing request was send....")
+        self.display.switch_to_mask(51, self.mask_no)
+
+
+    def home_request_finished(self, json_data):
+        print("Homing request finished....")
+        self.display.switch_to_mask(self.mask_no, 30)
