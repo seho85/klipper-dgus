@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-import imp
 import json
 from signal import signal, SIGINT
 from time import sleep
@@ -12,6 +11,7 @@ from dgus.display.mask import Mask
 from overview_display_mask import OverviewDisplayMask
 from axes_display_mask import AxesDisplayMask
 from homeing_mask import HomeingDisplayMask
+from tuning_mask import TuningMask
 
 from moonraker.websocket_interface import WebsocketInterface
 
@@ -59,7 +59,12 @@ if __name__ == "__main__":
 
     run_main_thread = True
 
+    display = Display(serial_com)
+
     def handleSIGINT(signum, frame):
+        if display.active_mask is not None:
+            display.active_mask.mask_suppressed()
+
         websock.stop()
         websock.write_json_config()
         serial_com.stop()
@@ -72,9 +77,7 @@ if __name__ == "__main__":
     if websock.read_json_config():
         websock.start()
 
-
-    display = Display(serial_com)
-        
+      
     overviewMask = OverviewDisplayMask(serial_com, websock)
     display.add_mask(overviewMask)
     
@@ -84,7 +87,7 @@ if __name__ == "__main__":
     axesMask =  AxesDisplayMask(serial_com, websock, display)
     display.add_mask(axesMask)
 
-    tuningMask = Mask(3, serial_com)
+    tuningMask = TuningMask(serial_com, websock)
     display.add_mask(tuningMask)
 
     extruderMask = Mask(4, serial_com)

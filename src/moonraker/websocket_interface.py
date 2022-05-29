@@ -199,7 +199,7 @@ class WebsocketInterface(JsonSerializable):
                 self.json_data_modell = json_merged
 
             
-            print(json.dumps(self.json_data_modell["toolhead"]["homed_axes"], indent=3))
+            #print(json.dumps(self.json_data_modell["toolhead"]["homed_axes"], indent=3))
             #print(json.dumps(json_merged, indent=2))
 
 

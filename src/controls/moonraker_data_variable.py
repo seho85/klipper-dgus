@@ -12,6 +12,8 @@ class MoonrakerDataVariable(DataVariable):
 
     klipper_value_type : KlipperValueType = None
     array_index = -1
+
+    fixed_point_decimal_places : int = 1
     
     def __init__(self, comInterface: SerialCommunication, dataAddress: int, dataLength: int, configAddress: int, websock : WebsocketInterface, klipper_value_type = KlipperValueType.FLOAT) -> None:
         super().__init__(comInterface, dataAddress, dataLength, configAddress)
@@ -35,12 +37,11 @@ class MoonrakerDataVariable(DataVariable):
 
         #print(f'data var: {temp_float}')
 
-        
         return int(temp_float)
 
 
     def read_moonraker_data_callback(self):
         json_obj = self.websock.get_klipper_data(self.klipper_data, self.array_index)
-        val = self.value_to_fixed_point(json_obj, 1)
+        val = self.value_to_fixed_point(json_obj, self.fixed_point_decimal_places)
         return val.to_bytes(length=2, byteorder='big', signed=True)
 
