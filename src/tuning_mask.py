@@ -24,6 +24,10 @@ class TuningMask(Mask):
     run_query_slider_value = False
 
     SPEED_FACTOR_ADDRESS = 0x5001
+    EXTRUSION_FACTOR_ADDRESS = 0x5010
+
+    SPEED_FACTOR = 0
+    EXTRUSION_FACTOR = 1
 
     def __init__(self, com_interface: SerialCommunication, web_sock : WebsocketInterface) -> None:
         super().__init__(3, com_interface)
@@ -35,10 +39,10 @@ class TuningMask(Mask):
         #self.controls.append(self.speed)
 
 
-        self.extrusion = MoonrakerDataVariable(com_interface, 0x5010, 2, 0xFFFF, web_sock, KlipperValueType.PERCENTAGE)
-        self.extrusion.set_klipper_data(["gcode_move", "extrude_factor"])
+        self.extrusion = MoonrakerDataVariable(com_interface, self.EXTRUSION_FACTOR_ADDRESS, 2, 0xFFFF, web_sock, KlipperValueType.PERCENTAGE)
+        #self.extrusion.set_klipper_data(["gcode_move", "extrude_factor"])
         self.extrusion.fixed_point_decimal_places = 0
-        self.controls.append(self.extrusion)
+        #self.controls.append(self.extrusion)
 
         #com_interface.register_spontaneous_callback(0x0ff1,  self.speed_factor_changed)
 
@@ -72,61 +76,61 @@ class TuningMask(Mask):
 
     """
 
-    def write_speed_factor_to_display(self, speed_val):
+    def write_factor_to_display(self, address, speed_val):
         
         #actual_percentange = float(self.web_sock.json_data_modell["gcode_move"]["speed_factor"])
         act_speed_as_int = int(speed_val * 100)
 
-        speed_factor_wrote_to_display = False
+        factor_wrote_to_display = False
 
-        def get_set_speed_on_display_request():
+        def get_set_factor_on_display_request():
             nonlocal act_speed_as_int
-            req = build_write_vp(self.SPEED_FACTOR_ADDRESS, act_speed_as_int.to_bytes(byteorder='big', length=2))
+            req = build_write_vp(address, act_speed_as_int.to_bytes(byteorder='big', length=2))
 
             return req
 
-        def set_speed_on_display_response(data):
-            nonlocal speed_factor_wrote_to_display
-            speed_factor_wrote_to_display = True
+        def set_factor_on_display_response(data):
+            nonlocal factor_wrote_to_display
+            factor_wrote_to_display = True
 
-        req = Request(get_set_speed_on_display_request, set_speed_on_display_response, "Set Actual Speed Factor")
+        req = Request(get_set_factor_on_display_request, set_factor_on_display_response, "Set Actual Speed Factor")
         self._com_interface.queue_request(req)
 
-        while not speed_factor_wrote_to_display:
+        while not factor_wrote_to_display:
             sleep(0.5)
 
-        print("Speedfactor was written to display...")
-        bp=1
+        print("Factor was written to display...")
+
 
         
-    def read_speedfactor_from_display(self):
-        speed_factor_was_read = False
-        read_speed_factor_float  : float = 0.0
+    def read_factor_from_display(self, address):
+        factor_was_read = False
+        read_factor_float  : float = 0.0
 
-        def get_query_speed_factor_request():
-            return build_read_vp(self.SPEED_FACTOR_ADDRESS, 1)
+        def get_query_factor_request():
+            return build_read_vp(address, 1)
 
-        def speed_factor_query_response(response):
+        def factor_query_response(response):
             val = int.from_bytes(response[7:], byteorder='big')
-            nonlocal speed_factor_was_read
-            speed_factor_was_read = True
-            nonlocal read_speed_factor_float
-            read_speed_factor_float = float(val) / 100
+            nonlocal factor_was_read
+            factor_was_read = True
+            nonlocal read_factor_float
+            read_factor_float = float(val) / 100
 
         req_query_speed_factor = Request(
-            request_data_func=get_query_speed_factor_request,
-            response_callback=speed_factor_query_response,
-            name="Read Speed Factor"
+            request_data_func=get_query_factor_request,
+            response_callback=factor_query_response,
+            name="Read Factor"
         )
 
         self._com_interface.queue_request(req_query_speed_factor)
 
-        while not speed_factor_was_read:
+        while not factor_was_read:
             sleep(0.5)
 
-        return read_speed_factor_float
+        return read_factor_float
 
-    def write_speed_factor_to_klipper(self, speed_factor):
+    def write_factor_to_klipper(self, speed_factor, factor_type):
         
         response_received = False
 
@@ -142,10 +146,16 @@ class TuningMask(Mask):
             "jsonrpc": "2.0",
             "method": "printer.gcode.script",
             "params": {
-                "script": f"M220 S{str(speed_factor * 100)}\n"
+                "script": ""
             },
             "id": 8000
         }
+
+        if factor_type == self.SPEED_FACTOR:
+            set_speed_factor_rpc_request["params"]["script"] = f"M220 S{str(speed_factor * 100)}\n"
+
+        if factor_type == self.EXTRUSION_FACTOR:
+            set_speed_factor_rpc_request["params"]["script"] = f"M221 S{str(speed_factor * 100)}\n"
 
         moonraker_request = MoonrakerRequest(
             response_received_callback=response_received_callback,
@@ -159,7 +169,7 @@ class TuningMask(Mask):
             sleep(0.5)
 
 
-        print("speedfactor was written to klipper...")
+        print("factor was written to klipper...")
 
 
 
@@ -174,40 +184,78 @@ class TuningMask(Mask):
     def query_slider_value_thread_function(self):
                        
         begin_speed_factor = float(self.web_sock.json_data_modell["gcode_move"]["speed_factor"])
-        self.write_speed_factor_to_display(begin_speed_factor)
+        self.write_factor_to_display(self.SPEED_FACTOR_ADDRESS, begin_speed_factor)
 
         last_speed_factor_klipper : float = begin_speed_factor
         last_speed_factor_display : float = begin_speed_factor
+
+        begin_extrusion_factor = float(self.web_sock.json_data_modell["gcode_move"]["extrude_factor"])
+        self.write_factor_to_display(self.EXTRUSION_FACTOR_ADDRESS, begin_extrusion_factor)
+
+        last_extrusion_factor_klipper : float = begin_extrusion_factor
+        last_extrusion_factor_display : float = begin_extrusion_factor
+        
         while(self.run_query_slider_value):
 
-            speed_factor_display = self.read_speedfactor_from_display()
+            speed_factor_display = self.read_factor_from_display(self.SPEED_FACTOR_ADDRESS)
             speed_factor_klipper = float(self.web_sock.json_data_modell["gcode_move"]["speed_factor"])
 
-            speed_factor_in_display_changed = False
-            speed_factor_in_klipper_changed = False
-
-            if speed_factor_display != last_speed_factor_display:
-                print('SpeedFactor on display changed...')
-                speed_factor_in_display_changed = True
-
-            if speed_factor_klipper != last_speed_factor_klipper:
-                print('Speedfactor in Klipper changed...')
-                speed_factor_in_klipper_changed = True
-
-            if speed_factor_in_display_changed and speed_factor_in_klipper_changed:
-                print("Speedfactor in Display + Klipper changed.. Using speedfactor from Display")
-                self.write_speed_factor_to_klipper(speed_factor_display)
-            
-            elif speed_factor_in_klipper_changed:
-                self.write_speed_factor_to_display(speed_factor_klipper)
-
-            elif speed_factor_in_display_changed:
-                self.write_speed_factor_to_klipper(speed_factor_display)
+            self.handle_speed_factor(speed_factor_display, speed_factor_klipper, last_speed_factor_display, last_speed_factor_klipper)
 
             last_speed_factor_klipper = speed_factor_klipper
             last_speed_factor_display = speed_factor_display
+
+            extrusion_factor_klipper = float(self.web_sock.json_data_modell["gcode_move"]["extrude_factor"])
+            extrusion_factor_display = speed_factor_display = self.read_factor_from_display(self.EXTRUSION_FACTOR_ADDRESS)
+
+            self.handle_extrusion_factor(extrusion_factor_display, extrusion_factor_klipper, last_extrusion_factor_display, last_extrusion_factor_klipper)
+
+            last_extrusion_factor_display = extrusion_factor_display
+            last_extrusion_factor_klipper = extrusion_factor_klipper
          
             sleep(0.5)
+
+    def handle_speed_factor(self, speed_factor_display, speed_factor_klipper,last_speed_factor_display, last_speed_factor_klipper):
+        speed_factor_in_display_changed = False
+        speed_factor_in_klipper_changed = False
+
+        if speed_factor_display != last_speed_factor_display:
+            print('SpeedFactor on display changed...')
+            speed_factor_in_display_changed = True
+
+        if speed_factor_klipper != last_speed_factor_klipper:
+            print('Speedfactor in Klipper changed...')
+            speed_factor_in_klipper_changed = True
+
+        if speed_factor_in_display_changed and speed_factor_in_klipper_changed:
+            print("Speedfactor in Display + Klipper changed.. Using speedfactor from Display")
+            self.write_factor_to_klipper(speed_factor_display, self.SPEED_FACTOR)
+        
+        elif speed_factor_in_klipper_changed:
+            self.write_factor_to_display(self.SPEED_FACTOR_ADDRESS,speed_factor_klipper)
+
+        elif speed_factor_in_display_changed:
+            self.write_factor_to_klipper(speed_factor_display, self.SPEED_FACTOR)
+
+    def handle_extrusion_factor(self, extrusion_factor_display, extrusion_factor_klipper,  last_extrusion_factor_display, last_extrusion_factor_klipper):
+        extrusion_factor_in_display_changed = False
+        extrusion_factor_in_klipper_changed = False
+
+        if extrusion_factor_display != last_extrusion_factor_display:
+            extrusion_factor_in_display_changed = True
+
+        if extrusion_factor_klipper != last_extrusion_factor_klipper:
+            extrusion_factor_in_klipper_changed = True
+
+        if extrusion_factor_in_display_changed and extrusion_factor_in_klipper_changed:
+            self.write_factor_to_klipper(extrusion_factor_display, self.EXTRUSION_FACTOR)
+
+        elif extrusion_factor_in_klipper_changed:
+            self.write_factor_to_display(self.EXTRUSION_FACTOR_ADDRESS, extrusion_factor_klipper)
+
+        elif extrusion_factor_in_display_changed:
+            self.write_factor_to_klipper(extrusion_factor_display, self.EXTRUSION_FACTOR)
+
 
 
     def mask_suppressed(self):
