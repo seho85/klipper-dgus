@@ -19,15 +19,19 @@ class TuningMask(Mask):
 
     speed : MoonrakerDataVariable = None
     extrusion : MoonrakerDataVariable = None
+    z_offset : MoonrakerDataVariable = None
 
     query_slider_value_thread : Thread = None
     run_query_slider_value = False
 
     SPEED_FACTOR_ADDRESS = 0x5001
     EXTRUSION_FACTOR_ADDRESS = 0x5010
+    Z_OFFSET_BITICON_ADDRESS = 0x5030
 
     SPEED_FACTOR = 0
     EXTRUSION_FACTOR = 1
+
+    z_offset_move_distance = 0.01
 
     def __init__(self, com_interface: SerialCommunication, web_sock : WebsocketInterface) -> None:
         super().__init__(3, com_interface)
@@ -44,14 +48,41 @@ class TuningMask(Mask):
         self.extrusion.fixed_point_decimal_places = 0
         #self.controls.append(self.extrusion)
 
+        self.z_offset = MoonrakerDataVariable(com_interface, 0x5020, 2, 0xFFFF, web_sock)
+        self.z_offset.fixed_point_decimal_places = 3
+        self.z_offset.set_klipper_data(["gcode_move", "homing_origin"], 2)
+        self.controls.append(self.z_offset)
+
+
         #com_interface.register_spontaneous_callback(0x0ff1,  self.speed_factor_changed)
 
+        com_interface.register_spontaneous_callback(0x0014, self.z_offset_distance_changed)
+        com_interface.register_spontaneous_callback(0x0013, self.z_offset_button_pressed)
+        com_interface.register_spontaneous_callback(0x0015, self.speed_factor_keyboard_value_entered)
+        com_interface.register_spontaneous_callback(0x0016, self.extrusion_factor_keyboard_value_entered)
 
-    """
-    def speed_factor_changed(self, response):
-        
+    def speed_factor_keyboard_value_entered(self, response):
         data = response[7:]
+        speed_factor = float(self.decode_numeric_oskbd_value(data))
+        print(f'SpeedFactor: Keyboard Input: {speed_factor}')
 
+        if speed_factor >= 10 and speed_factor <= 200:
+            self.write_factor_to_klipper(speed_factor / 100, self.SPEED_FACTOR)
+
+    def extrusion_factor_keyboard_value_entered(self, response):
+        data = response[7:]
+        extrusion_factor = float(self.decode_numeric_oskbd_value(data))
+        print(f'ExtrusionFactor: Keyboard Input: {extrusion_factor}')
+
+        if extrusion_factor >= 10 and extrusion_factor <= 200:
+            self.write_factor_to_klipper(extrusion_factor / 100, self.EXTRUSION_FACTOR)
+
+    #TODO: Move to own module..
+    def decode_numeric_oskbd_value(self, data : bytes):
+        # The data entered with the onscreen keyboard arives ascii coded.
+        # And 0xff is appended to terminate the string.
+        # But 0xff is not ascii decodable to we just use the data before
+        # the first appearance of 0xff
         new_data = bytearray()
         for byte in data:
             if byte != 0xff:
@@ -59,22 +90,66 @@ class TuningMask(Mask):
             else:
                 break
 
-        val = str(new_data, encoding='ascii')
+        temperature_str = str(new_data, encoding='ascii')
+        temperature_str = temperature_str.replace(",",".")
+
+        return temperature_str
+    
+    def z_offset_distance_changed(self, response):
+        val = int.from_bytes(response[7:], byteorder='big')
+        float_val = float(val) / 1000
+        print(f'z_offset: {val} = {float_val}mm')
+
+        biticon_bit_pattern = 0
+
+        if val == 10:
+            biticon_bit_pattern = 1
+        elif val == 50:
+            biticon_bit_pattern = 2
+
+        elif val == 100:
+            biticon_bit_pattern = 4
+
+        def get_set_biticon_request():
+            nonlocal biticon_bit_pattern
+            return build_write_vp(self.Z_OFFSET_BITICON_ADDRESS, biticon_bit_pattern.to_bytes(byteorder='big', length=2))
+
+        if biticon_bit_pattern != 0:
+            req = Request(get_set_biticon_request, None, "Set Z-Offset Biticon")
+            self._com_interface.queue_request(req)
+
+            self.z_offset_move_distance = float_val
+
+    def z_offset_button_pressed(self, response):
+        print(f"ZOffsetButton Response {response}")
+        val = int.from_bytes(response[7:], byteorder='big')
+
+        z_offset_adjust : str = "0.0"
+        if val == 0:
+            print("Z-Offset Raise")
+            z_offset_adjust = f'{self.z_offset_move_distance}'
+        elif val == 1:
+            print("Z-Offset Lower")
+            z_offset_adjust = f'-{self.z_offset_move_distance}'
 
         
-
-        set_extruder_temp = {
+        adjust_zoffset_rpc_request = {
             "jsonrpc": "2.0",
             "method": "printer.gcode.script",
             "params": {
-               "script": f"M220 S{val}\n"
-           },
-           "id": 8000
+                "script": f'SET_GCODE_OFFSET Z_ADJUST={z_offset_adjust} MOVE=1'
+            },
+            "id": 8000
         }
-        
-        self.web_sock.ws_app.send(json.dumps(set_extruder_temp))
 
-    """
+        print(json.dumps(adjust_zoffset_rpc_request, indent=3))
+
+        self.web_sock.ws_app.send(json.dumps(adjust_zoffset_rpc_request))
+
+
+        
+
+
 
     def write_factor_to_display(self, address, speed_val):
         
@@ -100,7 +175,6 @@ class TuningMask(Mask):
             sleep(0.5)
 
         print("Factor was written to display...")
-
 
         
     def read_factor_from_display(self, address):
@@ -262,5 +336,5 @@ class TuningMask(Mask):
         print(f'Tuning Mask {self.mask_no} is now suppressed')
         self.run_query_slider_value = False
         self.query_slider_value_thread.join()
-        pass
+
     

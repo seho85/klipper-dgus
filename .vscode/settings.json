@@ -1,0 +1,23 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "dist/": true,
+        "**/__pycache__/**":true,
+        "**/*.egg-info*/" : true,
+        "venv/" : true,
+        "cov.xml" : true,
+        ".coverage" : true,
+        "build/" : true,
+        ".eggs/" : true,
+        ".pytest_cache" : true
+
+
+    },
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": false,
+}

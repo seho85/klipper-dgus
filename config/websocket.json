@@ -23,33 +23,38 @@
             "live_velocity",
             "live_extruder_velocity"
          ],
-         "toolhead": null
+         "toolhead": null,
+         "gcode_move": [
+            "speed_factor",
+            "extrude_factor",
+            "homing_origin"
+         ]
       },
       "data_model": {
          "virtual_sdcard": {
-            "progress": 0.0
+            "progress": 0.045901202780277116
          },
          "motion_report": {
             "live_position": [
-               175.5,
-               100.0,
-               10.0,
-               0.0
+               255.0,
+               245.00000000000003,
+               2.606807,
+               80.31327999999999
             ],
             "live_velocity": 0.0,
-            "live_extruder_velocity": 0.0
+            "live_extruder_velocity": -3.552713678800501e-15
          },
          "print_stats": {
-            "state": "standby",
-            "print_duration": 0.0
+            "state": "paused",
+            "print_duration": 65.02227778799715
          },
          "toolhead": {
             "square_corner_velocity": 5.0,
             "max_accel": 1500.0,
-            "homed_axes": "",
-            "estimated_print_time": 4703.481933152778,
+            "homed_axes": "xyz",
+            "estimated_print_time": 829.9440548055555,
             "max_velocity": 150.0,
-            "print_time": 1024.9452958333331,
+            "print_time": 615.3268335783229,
             "max_accel_to_decel": 1500.0,
             "axis_minimum": [
                -3.0,
@@ -65,20 +70,20 @@
                0.0
             ],
             "position": [
-               175.5,
-               100.0,
-               10.0,
-               0.0
+               255.0,
+               245.0,
+               2.606807,
+               80.31327999999999
             ],
             "extruder": "extruder"
          },
          "heater_bed": {
-            "temperature": 23.3,
-            "target": 0.0
+            "temperature": 60.02,
+            "target": 60.0
          },
          "extruder": {
-            "temperature": 24.08,
-            "target": 0.0
+            "temperature": 194.91,
+            "target": 195.0
          },
          "server_info": {
             "klippy_connected": true,
@@ -124,6 +129,16 @@
                5
             ],
             "api_version_string": "1.0.5"
+         },
+         "gcode_move": {
+            "speed_factor": 125.00000000000001,
+            "extrude_factor": 1.0,
+            "homing_origin": [
+               0.0,
+               0.0,
+               0.0,
+               0.0
+            ]
          }
       }
    }
