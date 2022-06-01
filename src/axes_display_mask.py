@@ -8,6 +8,8 @@ from moonraker.websocket_interface import WebsocketInterface
 from dgus.display.communication.protocol import build_write_vp
 from keycodes import KeyCodes
 from moonraker.moonraker_request import MoonrakerRequest
+from data_addresses import DataAddress
+
 
 class AxesDisplayMask(Mask):
     
@@ -21,23 +23,23 @@ class AxesDisplayMask(Mask):
         self.web_socket = web_sock
         self.display = display
 
-        self.xpos = MoonrakerDataVariable(self._com_interface, 0x2030, 2, 0xffff, self.web_socket)
+        self.xpos = MoonrakerDataVariable(self._com_interface, DataAddress.LIVE_X_POS, 2, DataAddress.UNDEFINED, self.web_socket)
         #self.xpos.set_klipper_data(["toolhead", "position"], 0)
         self.xpos.set_klipper_data(["motion_report", "live_position"], 0)
         self.controls.append(self.xpos)
 
-        self.ypos = MoonrakerDataVariable(self._com_interface, 0x2032, 2, 0xffff, self.web_socket)
+        self.ypos = MoonrakerDataVariable(self._com_interface, DataAddress.LIVE_Y_POS, 2, DataAddress.UNDEFINED, self.web_socket)
         #self.ypos.set_klipper_data(["toolhead", "position"], 1)
         self.ypos.set_klipper_data(["motion_report", "live_position"], 1)
         self.controls.append(self.ypos)
 
-        self.zpos = MoonrakerDataVariable(self._com_interface, 0x2034, 2, 0xffff, self.web_socket)
+        self.zpos = MoonrakerDataVariable(self._com_interface, DataAddress.LIVE_Z_POS, 2, DataAddress.UNDEFINED, self.web_socket)
         #self.zpos.set_klipper_data(["toolhead", "position"], 2)
         self.zpos.set_klipper_data(["motion_report", "live_position"], 2)
         self.controls.append(self.zpos)
 
-        com_interface.register_spontaneous_callback(0x0005, self.move_distance_changed)
-        com_interface.register_spontaneous_callback(0x0012, self.key_pressed)
+        com_interface.register_spontaneous_callback(DataAddress.SPONT_MOVE_DISTANCE, self.move_distance_changed)
+        com_interface.register_spontaneous_callback(DataAddress.SPONT_MOVE_BUTTON, self.key_pressed)
 
     def move_distance_changed(self, data):
         response_payload = data[7:]
@@ -59,7 +61,7 @@ class AxesDisplayMask(Mask):
             biticon_val = 8
 
         def send_biticon_state():
-            req_bytes = build_write_vp(0x2036, biticon_val.to_bytes(byteorder='big', length=2))
+            req_bytes = build_write_vp(DataAddress.MOVE_DISTANCE_BITICON, biticon_val.to_bytes(byteorder='big', length=2))
             return req_bytes
             
 

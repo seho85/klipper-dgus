@@ -12,6 +12,7 @@ from controls.klipper_value_format import KlipperValueType
 from threading import Thread
 
 from moonraker.moonraker_request import MoonrakerRequest
+from data_addresses import DataAddress
 
 class TuningMask(Mask):
 
@@ -24,10 +25,6 @@ class TuningMask(Mask):
     query_slider_value_thread : Thread = None
     run_query_slider_value = False
 
-    SPEED_FACTOR_ADDRESS = 0x5001
-    EXTRUSION_FACTOR_ADDRESS = 0x5010
-    Z_OFFSET_BITICON_ADDRESS = 0x5030
-
     SPEED_FACTOR = 0
     EXTRUSION_FACTOR = 1
 
@@ -37,29 +34,27 @@ class TuningMask(Mask):
         super().__init__(3, com_interface)
         self.web_sock = web_sock
 
-        self.speed = MoonrakerDataVariable(com_interface, self.SPEED_FACTOR_ADDRESS, 2, 0xFFFF, web_sock, KlipperValueType.PERCENTAGE)
+        self.speed = MoonrakerDataVariable(com_interface, DataAddress.SPEED_FACTOR, 2, DataAddress.UNDEFINED, web_sock, KlipperValueType.PERCENTAGE)
         self.speed.set_klipper_data(["gcode_move", "speed_factor"])
         self.speed.fixed_point_decimal_places = 0
         #self.controls.append(self.speed)
 
 
-        self.extrusion = MoonrakerDataVariable(com_interface, self.EXTRUSION_FACTOR_ADDRESS, 2, 0xFFFF, web_sock, KlipperValueType.PERCENTAGE)
+        self.extrusion = MoonrakerDataVariable(com_interface, DataAddress.EXTRUSION_FACTOR, 2, DataAddress.UNDEFINED, web_sock, KlipperValueType.PERCENTAGE)
         #self.extrusion.set_klipper_data(["gcode_move", "extrude_factor"])
         self.extrusion.fixed_point_decimal_places = 0
         #self.controls.append(self.extrusion)
 
-        self.z_offset = MoonrakerDataVariable(com_interface, 0x5020, 2, 0xFFFF, web_sock)
+        self.z_offset = MoonrakerDataVariable(com_interface, DataAddress.Z_OFFSET, 2, DataAddress.UNDEFINED, web_sock)
         self.z_offset.fixed_point_decimal_places = 3
         self.z_offset.set_klipper_data(["gcode_move", "homing_origin"], 2)
         self.controls.append(self.z_offset)
 
 
-        #com_interface.register_spontaneous_callback(0x0ff1,  self.speed_factor_changed)
-
-        com_interface.register_spontaneous_callback(0x0014, self.z_offset_distance_changed)
-        com_interface.register_spontaneous_callback(0x0013, self.z_offset_button_pressed)
-        com_interface.register_spontaneous_callback(0x0015, self.speed_factor_keyboard_value_entered)
-        com_interface.register_spontaneous_callback(0x0016, self.extrusion_factor_keyboard_value_entered)
+        com_interface.register_spontaneous_callback(DataAddress.SPONT_ZOFFET_DISTANCE, self.z_offset_distance_changed)
+        com_interface.register_spontaneous_callback(DataAddress.SPONT_ZOFFSET_BUTTON, self.z_offset_button_pressed)
+        com_interface.register_spontaneous_callback(DataAddress.SPONT_SPEED_FACTOR_SETPOINT, self.speed_factor_keyboard_value_entered)
+        com_interface.register_spontaneous_callback(DataAddress.SPONT_EXTRUSION_FACTOR_SETPOINT, self.extrusion_factor_keyboard_value_entered)
 
     def speed_factor_keyboard_value_entered(self, response):
         data = response[7:]
@@ -112,7 +107,7 @@ class TuningMask(Mask):
 
         def get_set_biticon_request():
             nonlocal biticon_bit_pattern
-            return build_write_vp(self.Z_OFFSET_BITICON_ADDRESS, biticon_bit_pattern.to_bytes(byteorder='big', length=2))
+            return build_write_vp(DataAddress.Z_OFFSET_BITICON, biticon_bit_pattern.to_bytes(byteorder='big', length=2))
 
         if biticon_bit_pattern != 0:
             req = Request(get_set_biticon_request, None, "Set Z-Offset Biticon")
@@ -258,20 +253,20 @@ class TuningMask(Mask):
     def query_slider_value_thread_function(self):
                        
         begin_speed_factor = float(self.web_sock.json_data_modell["gcode_move"]["speed_factor"])
-        self.write_factor_to_display(self.SPEED_FACTOR_ADDRESS, begin_speed_factor)
+        self.write_factor_to_display(DataAddress.SPEED_FACTOR, begin_speed_factor)
 
         last_speed_factor_klipper : float = begin_speed_factor
         last_speed_factor_display : float = begin_speed_factor
 
         begin_extrusion_factor = float(self.web_sock.json_data_modell["gcode_move"]["extrude_factor"])
-        self.write_factor_to_display(self.EXTRUSION_FACTOR_ADDRESS, begin_extrusion_factor)
+        self.write_factor_to_display(DataAddress.EXTRUSION_FACTOR, begin_extrusion_factor)
 
         last_extrusion_factor_klipper : float = begin_extrusion_factor
         last_extrusion_factor_display : float = begin_extrusion_factor
         
         while(self.run_query_slider_value):
 
-            speed_factor_display = self.read_factor_from_display(self.SPEED_FACTOR_ADDRESS)
+            speed_factor_display = self.read_factor_from_display(DataAddress.SPEED_FACTOR)
             speed_factor_klipper = float(self.web_sock.json_data_modell["gcode_move"]["speed_factor"])
 
             self.handle_speed_factor(speed_factor_display, speed_factor_klipper, last_speed_factor_display, last_speed_factor_klipper)
@@ -280,7 +275,7 @@ class TuningMask(Mask):
             last_speed_factor_display = speed_factor_display
 
             extrusion_factor_klipper = float(self.web_sock.json_data_modell["gcode_move"]["extrude_factor"])
-            extrusion_factor_display = speed_factor_display = self.read_factor_from_display(self.EXTRUSION_FACTOR_ADDRESS)
+            extrusion_factor_display = speed_factor_display = self.read_factor_from_display(DataAddress.EXTRUSION_FACTOR)
 
             self.handle_extrusion_factor(extrusion_factor_display, extrusion_factor_klipper, last_extrusion_factor_display, last_extrusion_factor_klipper)
 
