@@ -12,3 +12,11 @@ Development
 2) install dependecies<pre>pip install -r requirements.txt</pre>
 3) create python-dgus library (See [python-dgus](https://github.com/seho85/python-dgus))
 4) Install python-dgus<pre>pip install <path_to_python_dgus>/dist/libdgus-0.0.2-py3-none-any.whl</pre>
+
+
+References
+----------
+This projects uses Graphics from:
+
+* [Klipper](https://github.com/Klipper3d/klipper)
+* [KlipperScreen](https://github.com/jordanruthe/KlipperScreen)

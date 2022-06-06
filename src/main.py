@@ -1,3 +1,20 @@
+ # 
+ # This file is part of python-dgus (https://github.com/seho85/python-dgus).
+ # Copyright (c) 2022 Sebastian Holzgreve
+ # 
+ # This program is free software: you can redistribute it and/or modify  
+ # it under the terms of the GNU General Public License as published by  
+ # the Free Software Foundation, version 3.
+ #
+ # This program is distributed in the hope that it will be useful, but 
+ # WITHOUT ANY WARRANTY; without even the implied warranty of 
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ # General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License 
+ # along with this program. If not, see <http://www.gnu.org/licenses/>.
+ #
+
 from datetime import datetime, timedelta
 import json
 from signal import signal, SIGINT
@@ -21,6 +38,7 @@ def emergency_stop_pressed(response : bytes):
     keycode = int.from_bytes(response_payload, byteorder='big')
 
     if keycode == 0xFFFF:
+        #TODO: define ID in request_id.py
         emergeny_stop_rpc_cmd = {
             "jsonrpc": "2.0",
             "method": "printer.emergency_stop",
@@ -38,7 +56,7 @@ if __name__ == "__main__":
 
     SERIAL_PORT = "/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0"
     serial_com = SerialCommunication(SERIAL_PORT)
-    serial_com.show_transmission_data = False
+    serial_com.show_transmission_data = True
 
 
     """
