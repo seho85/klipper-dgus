@@ -18,15 +18,19 @@
  
 import json
 from dgus.display.communication.communication_interface import SerialCommunication
+from dgus.display.mask import Mask
+from dgus.display.onscreen_keyboard import OnScreenKeyBoard
+
 from controls.moonraker_data_variable import MoonrakerDataVariable
 from controls.moonraker_text_variable import MoonrakerTextVariable
 from controls.moonraker_printtime_text_variable import MoonrakerPrintTimeTextVariable, PrintTimeDisplay
-from dgus.display.mask import Mask
+
 
 from moonraker.websocket_interface import WebsocketInterface
 from controls.klipper_value_format import KlipperValueType
 
 from data_addresses import DataAddress
+from moonraker.request_id import WebsocktRequestId
 
 class OverviewDisplayMask(Mask):
     websock : WebsocketInterface = None
@@ -121,7 +125,7 @@ class OverviewDisplayMask(Mask):
         address = int.from_bytes(response[4:6], byteorder='big', signed=False)
         data = response[7:]
                 
-        temp_str = self.decode_numeric_oskbd_value(data)
+        temp_str = OnScreenKeyBoard.decode_numeric_oskbd_value(data)# self.decode_numeric_oskbd_value(data)
 
         self.send_temperature_cmd("extruder", temp_str)
      
@@ -130,28 +134,13 @@ class OverviewDisplayMask(Mask):
         address = int.from_bytes(response[4:6], byteorder='big', signed=False)
         data = response[7:]
                 
-        temp_str = self.decode_numeric_oskbd_value(data)
+        
+        temp_str = OnScreenKeyBoard.decode_numeric_oskbd_value(data)
+        #temp_str = self.decode_numeric_oskbd_value(data)
 
         self.send_temperature_cmd("heater_bed", temp_str)
 
-    def decode_numeric_oskbd_value(self, data : bytes):
-        # The data entered with the onscreen keyboard arives ascii coded.
-        # And 0xff is appended to terminate the string.
-        # But 0xff is not ascii decodable to we just use the data before
-        # the first appearance of 0xff
-        new_data = bytearray()
-        for byte in data:
-            if byte != 0xff:
-                new_data.append(byte)
-            else:
-                break
-
-        temperature_str = str(new_data, encoding='ascii')
-        temperature_str = temperature_str.replace(",",".")
-
-        return temperature_str
-
-
+    
     def send_temperature_cmd(self, heater, temperature):
         if temperature != "":
             if heater != "":
@@ -161,7 +150,7 @@ class OverviewDisplayMask(Mask):
                     "params": {
                         "script": f"SET_HEATER_TEMPERATURE HEATER={heater} TARGET={temperature}"
                     },
-                    "id": 7466
+                    "id": WebsocktRequestId.SET_HEATER_TEMPERATURE_CMD
                 }
    
                 self.websock.ws_app.send(json.dumps(set_extruder_temp))

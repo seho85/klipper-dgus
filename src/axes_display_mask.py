@@ -26,6 +26,7 @@ from dgus.display.communication.protocol import build_write_vp
 from keycodes import KeyCodes
 from moonraker.moonraker_request import MoonrakerRequest
 from data_addresses import DataAddress
+from moonraker.request_id import WebsocktRequestId
 
 
 class AxesDisplayMask(Mask):
@@ -154,7 +155,7 @@ class AxesDisplayMask(Mask):
                 "script": f'G91\n G1 {axe}{move_sign}{move_distance} F{accell}\n G90',
                                 
             },
-            "id": 5555
+            "id": WebsocktRequestId.PERFORM_MOVE_CMD
         }
         self.web_socket.ws_app.send(dumps(move_cmd))
 
@@ -171,7 +172,7 @@ class AxesDisplayMask(Mask):
                 "script": 'M18 X Y Z\n G28',
                                 
             },
-            "id": 5555
+            "id": WebsocktRequestId.TURN_MOTORS_OFF_CMD
         }
 
         req = MoonrakerRequest(
@@ -184,9 +185,9 @@ class AxesDisplayMask(Mask):
 
     def homing_request_send(self):
         print("Homing request was send....")
-        self.display.switch_to_mask(51, self.mask_no)
+        self.display.switch_to_mask(51, False)
 
 
     def home_request_finished(self, json_data):
         print("Homing request finished....")
-        self.display.switch_to_mask(self.mask_no, 30)
+        self.display.switch_to_mask(self.mask_no, False)

@@ -29,6 +29,9 @@ from overview_display_mask import OverviewDisplayMask
 from axes_display_mask import AxesDisplayMask
 from homeing_mask import HomeingDisplayMask
 from tuning_mask import TuningMask
+from extruder_mask import ExtruderMask
+from extruder_temp_to_low_mask import ExtruderTemperatureToLowMask
+from fan_display_mask import FanMask
 
 from moonraker.websocket_interface import WebsocketInterface
 
@@ -80,8 +83,9 @@ if __name__ == "__main__":
     display = Display(serial_com)
 
     def handleSIGINT(signum, frame):
-        if display.active_mask is not None:
-            display.active_mask.mask_suppressed()
+        #TODO: Add function in Display to retrieve active mask!
+        if display._active_mask is not None:
+            display._active_mask.mask_suppressed()
 
         websock.stop()
         websock.write_json_config()
@@ -108,21 +112,24 @@ if __name__ == "__main__":
     tuningMask = TuningMask(serial_com, websock)
     display.add_mask(tuningMask)
 
-    extruderMask = Mask(4, serial_com)
+    extruderMask = ExtruderMask(serial_com, websock, display)
     display.add_mask(extruderMask)
 
-    fanMask = Mask(5, serial_com)
+    fanMask = FanMask(serial_com, websock)
     display.add_mask(fanMask)
 
     homeingInProgress = HomeingDisplayMask(51, serial_com, websock)
     display.add_mask(homeingInProgress)
 
+    extruder_temp_to_low_mask = ExtruderTemperatureToLowMask(serial_com, websock)
+    display.add_mask(extruder_temp_to_low_mask)
+
 
     if serial_com.start_com_thread():
         display.read_config_data_for_all_controls()
         #display.write_config_data_for_all_controls()
-
-        display.switch_to_mask(0, previous_mask_idx=30)
+        display.switch_to_mask(30)
+        display.switch_to_mask(0)
 
         
 

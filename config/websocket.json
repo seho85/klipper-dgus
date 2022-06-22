@@ -28,33 +28,39 @@
             "speed_factor",
             "extrude_factor",
             "homing_origin"
+         ],
+         "configfile": [
+            "settings"
+         ],
+         "fan": [
+            "speed"
          ]
       },
       "data_model": {
          "virtual_sdcard": {
-            "progress": 0.045901202780277116
+            "progress": 0.0
          },
          "motion_report": {
             "live_position": [
-               255.0,
-               245.00000000000003,
-               2.606807,
-               80.31327999999999
+               0.0,
+               0.0,
+               0.0,
+               0.0
             ],
             "live_velocity": 0.0,
-            "live_extruder_velocity": -3.552713678800501e-15
+            "live_extruder_velocity": 0.0
          },
          "print_stats": {
-            "state": "paused",
-            "print_duration": 65.02227778799715
+            "state": "standby",
+            "print_duration": 0.0
          },
          "toolhead": {
             "square_corner_velocity": 5.0,
             "max_accel": 1500.0,
-            "homed_axes": "xyz",
-            "estimated_print_time": 829.9440548055555,
+            "homed_axes": "",
+            "estimated_print_time": 36118.97399305556,
             "max_velocity": 150.0,
-            "print_time": 615.3268335783229,
+            "print_time": 5077.039584305557,
             "max_accel_to_decel": 1500.0,
             "axis_minimum": [
                -3.0,
@@ -70,24 +76,24 @@
                0.0
             ],
             "position": [
-               255.0,
-               245.0,
-               2.606807,
-               80.31327999999999
+               0.0,
+               0.0,
+               0.0,
+               0.0
             ],
             "extruder": "extruder"
          },
          "heater_bed": {
-            "temperature": 60.02,
-            "target": 60.0
+            "temperature": 22.91,
+            "target": 0.0
          },
          "extruder": {
-            "temperature": 194.91,
-            "target": 195.0
+            "temperature": 23.67,
+            "target": 0.0
          },
          "server_info": {
             "klippy_connected": true,
-            "klippy_state": "ready",
+            "klippy_state": "shutdown",
             "components": [
                "klippy_connection",
                "application",
@@ -120,7 +126,7 @@
                "docs"
             ],
             "warnings": [],
-            "websocket_count": 4,
+            "websocket_count": 2,
             "moonraker_version": "v0.7.1-547-gd3003a1-dirty",
             "missing_klippy_requirements": [],
             "api_version": [
@@ -131,7 +137,7 @@
             "api_version_string": "1.0.5"
          },
          "gcode_move": {
-            "speed_factor": 125.00000000000001,
+            "speed_factor": 0.7000000000000001,
             "extrude_factor": 1.0,
             "homing_origin": [
                0.0,
@@ -139,6 +145,689 @@
                0.0,
                0.0
             ]
+         },
+         "configfile": {
+            "settings": {
+               "force_move": {
+                  "enable_force_move": false
+               },
+               "gcode_macro jngl_funkytown": {
+                  "gcode": "\nM300 S2093 P240\nM300 S2093 P240\nM300 S932 P240\nM300 S2093 P240\nM300 S0 P240\nM300 S1567 P240\nM300 S0 P240\nM300 S1567 P240\nM300 S2093 P240\nM300 S2793 P240\nM300 S2637 P240\nM300 S2093 P240\nM300 S0 P960\nM300 S2093 P240\nM300 S2093 P240\nM300 S932 P240\nM300 S2093 P240\nM300 S0 P240\nM300 S1567 P240\nM300 S0 P240\nM300 S1567 P240\nM300 S2093 P240\nM300 S2793 P240\nM300 S2637 P240\nM300 S2093 P240",
+                  "description": "G-Code macro"
+               },
+               "gcode_macro jngl_bolero": {
+                  "gcode": "\nM300 S2093 P750\nM300 S2093 P375\nM300 S987 P187\nM300 S2093 P187\nM300 S2349 P187\nM300 S2093 P187\nM300 S987 P187\nM300 S880 P187\nM300 S2093 P375\nM300 S2093 P187\nM300 S880 P187\nM300 S2093 P750\nM300 S2093 P375\nM300 S987 P187\nM300 S2093 P187\nM300 S880 P187\nM300 S1567 P187\nM300 S1318 P187\nM300 S1396 P187\nM300 S1567 P1500\nM300 S1567 P187\nM300 S1396 P187\nM300 S1318 P187\nM300 S1174 P187\nM300 S1318 P187\nM300 S1396 P187\nM300 S1567 P187\nM300 S880 P187\nM300 S1567 P750\nM300 S1567 P750\nM300 S1567 P187\nM300 S880 P187\nM300 S987 P187\nM300 S880 P187\nM300 S1567 P187\nM300 S1396 P187\nM300 S1318 P187\nM300 S1174 P187\nM300 S1318 P187\nM300 S1174 P187\nM300 S1046 P375\nM300 S1046 P375\nM300 S1046 P187\nM300 S1174 P187\nM300 S1318 P375\nM300 S1396 P375\nM300 S1174 P750\nM300 S1567 P1500",
+                  "description": "G-Code macro"
+               },
+               "output_pin btn2_led": {
+                  "value": 0.0,
+                  "shutdown_value": 0.0,
+                  "pwm": false,
+                  "maximum_mcu_duration": 0.0,
+                  "pin": "rp_pico:gpio21"
+               },
+               "output_pin led": {
+                  "pin": "mcu:PA13",
+                  "shutdown_value": 0.0,
+                  "pwm": false,
+                  "maximum_mcu_duration": 0.0,
+                  "value": 0.0
+               },
+               "pause_resume": {
+                  "recover_velocity": 50.0
+               },
+               "gcode_macro pid_bed": {
+                  "gcode": "\nPID_CALIBRATE HEATER=heater_bed TARGET=60",
+                  "description": "G-Code macro"
+               },
+               "temperature_sensor raspi": {
+                  "min_temp": 0.0,
+                  "sensor_type": "temperature_host",
+                  "max_temp": 100.0,
+                  "sensor_path": "/sys/class/thermal/thermal_zone0/temp"
+               },
+               "gcode_macro jngl_supermario": {
+                  "gcode": "\nM300 S0 P600\nM300 S1046 P450\nM300 S1567 P150\nM300 S0 P300\nM300 S1318 P300\nM300 S0 P150\nM300 S880 P300\nM300 S987 P150\nM300 S0 P150\nM300 S932 P150\nM300 S880 P300\nM300 S1567 P450\nM300 S2637 P300\nM300 S3135 P300\nM300 S1760 P300\nM300 S2637 P150\nM300 S3135 P150\nM300 S0 P150\nM300 S2637 P300\nM300 S2093 P150\nM300 S2349 P150\nM300 S987 P450\nM300 S2093 P450\nM300 S1567 P150\nM300 S0 P300\nM300 S1318 P300\nM300 S0 P150\nM300 S880 P300\nM300 S987 P150\nM300 S0 P150\nM300 S932 P150\nM300 S880 P300\nM300 S1567 P300\nM300 S2637 P300\nM300 S3135 P300\nM300 S1760 P300\nM300 S2793 P150\nM300 S3135 P150\nM300 S0 P150\nM300 S2637 P300\nM300 S2093 P150\nM300 S2349 P150\nM300 S987 P300",
+                  "description": "G-Code macro"
+               },
+               "output_pin btn7_led": {
+                  "shutdown_value": 0.0,
+                  "pwm": false,
+                  "value": 0.0,
+                  "pin": "rp_pico:gpio16",
+                  "maximum_mcu_duration": 0.0
+               },
+               "output_pin lcd_backlight": {
+                  "shutdown_value": 0.0,
+                  "scale": 1.0,
+                  "cycle_time": 0.01,
+                  "pin": "rp_pico:gpio28",
+                  "maximum_mcu_duration": 0.0,
+                  "value": 1.0,
+                  "hardware_pwm": true,
+                  "pwm": true
+               },
+               "gcode_macro cancel_print": {
+                  "gcode": "\n{% if printer.pause_resume.is_paused|lower == 'false' and park|lower == 'true'%}\n_TOOLHEAD_PARK_PAUSE_CANCEL\n{% endif %}\nTURN_OFF_HEATERS\nCANCEL_PRINT_BASE",
+                  "description": "Cancel the actual running print",
+                  "variable_park": "True",
+                  "rename_existing": "CANCEL_PRINT_BASE"
+               },
+               "output_pin btn3_led": {
+                  "shutdown_value": 0.0,
+                  "pwm": false,
+                  "pin": "rp_pico:gpio20",
+                  "value": 0.0,
+                  "maximum_mcu_duration": 0.0
+               },
+               "mcu rpi": {
+                  "serial": "/tmp/klipper_host_mcu",
+                  "max_stepper_error": 2.5e-05
+               },
+               "gcode_macro end_print": {
+                  "gcode": "\nTURN_OFF_HEATERS                         ; Turn off bed and nozzle\nG91                                      ; Relative positioning\nG1 E-1 F3000                             ; Retract\nG1 X-0.5 Y-0.5 Z5 E-5                    ; Move a bit and retract filament even more\nG90                                      ; Absolute positioning\nG1 X0 Y200 F2200                         ; Move bed to front\nM107                                     ; Turn off part fan\nM84                                      ; Steppers off\nG90                                      ; Absolute positioning\nM117 Print done                          ; Send finish to display\nM300 S2489 P480                          ; A-TEAM jingle\nM300 S932 P240\nM300 S2489 P960\nM300 S0 P120\nM300 S1661 P240\nM300 S932 P480\nM300 S1244 P720\nM300 S0 P240\nM300 S1567 P120\nM300 S932 P120\nM300 S2489 P240\nM300 S932 P240\nM300 S2793 P240\nM300 S2489 P960\nM300 S0 P120\nM300 S2217 P360\nM300 S2093 P120\nM300 S932 P120\nM300 S1661 P360\nM300 S932 P960",
+                  "description": "All what needs to be done at print end"
+               },
+               "gcode_macro _toolhead_park_pause_cancel": {
+                  "gcode": "\n{% set x_park = printer.toolhead.axis_maximum.x|float - 5.0 %}\n{% set y_park = printer.toolhead.axis_maximum.y|float - 5.0 %}\n{% set z_park_delta = 2.0 %}\n{% set max_z = printer.toolhead.axis_maximum.z|float %}\n{% set act_z = printer.toolhead.position.z|float %}\n{% if act_z < (max_z - z_park_delta) %}\n{% set z_safe = z_park_delta %}\n{% else %}\n{% set z_safe = max_z - act_z %}\n{% endif %}\n{% if printer.extruder.can_extrude|lower == 'true' %}\nM83\nG1 E-{extrude} F2100\n{% if printer.gcode_move.absolute_extrude |lower == 'true' %} M82 {% endif %}\n{% else %}\n{action_respond_info(\"Extruder not hot enough\")}\n{% endif %}\n{% if \"xyz\" in printer.toolhead.homed_axes %}\nG91\nG1 Z{z_safe} F900\nG90\nG1 X{x_park} Y{y_park} F6000\n{% if printer.gcode_move.absolute_coordinates|lower == 'false' %} G91 {% endif %}\n{% else %}\n{action_respond_info(\"Printer not homed\")}\n{% endif %}",
+                  "description": "Helper: park toolhead used in PAUSE and CANCEL_PRINT",
+                  "variable_extrude": "1.0"
+               },
+               "z_tilt": {
+                  "retries": 7,
+                  "horizontal_move_z": 7.0,
+                  "z_positions": [
+                     [
+                        -30.0,
+                        135.0
+                     ],
+                     [
+                        275.0,
+                        135.0
+                     ]
+                  ],
+                  "retry_tolerance": 0.015,
+                  "points": [
+                     [
+                        60.0,
+                        105.0
+                     ],
+                     [
+                        260.0,
+                        105.0
+                     ]
+                  ],
+                  "speed": 140.0
+               },
+               "gcode_macro blt_up": {
+                  "gcode": "\n{action_respond_info(\"Move Pin up\")}\nBLTOUCH_DEBUG COMMAND=pin_up",
+                  "description": "BLTouch Move Up"
+               },
+               "heater_bed": {
+                  "control": "pid",
+                  "pid_kp": 68.674,
+                  "pullup_resistor": 4700.0,
+                  "sensor_pin": "PB0",
+                  "heater_pin": "PA4",
+                  "max_power": 1.0,
+                  "min_extrude_temp": 170.0,
+                  "sensor_type": "EPCOS 100K B57560G104F",
+                  "inline_resistor": 0.0,
+                  "pid_kd": 996.624,
+                  "pwm_cycle_time": 0.1,
+                  "pid_ki": 1.183,
+                  "min_temp": 0.0,
+                  "max_temp": 110.0,
+                  "smooth_time": 1.0
+               },
+               "bed_mesh default": {
+                  "tension": 0.2,
+                  "min_x": 13.0,
+                  "min_y": 7.0,
+                  "y_count": 6,
+                  "mesh_y_pps": 3,
+                  "x_count": 6,
+                  "version": 1,
+                  "algo": "bicubic",
+                  "mesh_x_pps": 2,
+                  "max_y": 227.0,
+                  "max_x": 206.95,
+                  "points": [
+                     [
+                        0.184307,
+                        0.209307,
+                        0.186807,
+                        0.259307,
+                        0.271807,
+                        0.359307
+                     ],
+                     [
+                        0.116807,
+                        0.089307,
+                        0.096807,
+                        0.104307,
+                        0.089307,
+                        0.164307
+                     ],
+                     [
+                        0.036807,
+                        0.006807,
+                        -0.028193,
+                        0.006807,
+                        -0.015693,
+                        0.069307
+                     ],
+                     [
+                        -0.050693,
+                        -0.090693,
+                        -0.090693,
+                        -0.015693,
+                        -0.045693,
+                        0.011807
+                     ],
+                     [
+                        -0.103193,
+                        -0.100693,
+                        -0.110693,
+                        -0.055693,
+                        -0.060693,
+                        0.021807
+                     ],
+                     [
+                        -0.105693,
+                        -0.133193,
+                        -0.083193,
+                        -0.030693,
+                        -0.058193,
+                        0.006807
+                     ]
+                  ]
+               },
+               "virtual_sdcard": {
+                  "path": "/home/pi/gcode_files"
+               },
+               "temperature_fan rpi_pwm_fan": {
+                  "control": "pid",
+                  "pid_kp": 1.0,
+                  "cycle_time": 4e-05,
+                  "kick_start_time": 0.1,
+                  "pin": "rpi:pwmchip0/pwm0",
+                  "sensor_path": "/sys/class/thermal/thermal_zone0/temp",
+                  "off_below": 0.0,
+                  "pid_kd": 1.0,
+                  "shutdown_speed": 1.0,
+                  "min_speed": 0.0,
+                  "sensor_type": "temperature_host",
+                  "target_temp": 40.0,
+                  "pid_deriv_time": 2.0,
+                  "max_power": 1.0,
+                  "max_speed": 1.0,
+                  "hardware_pwm": true,
+                  "pid_ki": 1.0,
+                  "min_temp": 0.0,
+                  "max_temp": 100.0
+               },
+               "output_pin btn8_led": {
+                  "shutdown_value": 0.0,
+                  "pwm": false,
+                  "pin": "rp_pico:gpio15",
+                  "value": 0.0,
+                  "maximum_mcu_duration": 0.0
+               },
+               "gcode_macro jngl_a_team": {
+                  "gcode": "\nM300 S2489 P480\nM300 S932 P240\nM300 S2489 P960\nM300 S0 P120\nM300 S1661 P240\nM300 S932 P480\nM300 S1244 P720\nM300 S0 P240\nM300 S1567 P120\nM300 S932 P120\nM300 S2489 P240\nM300 S932 P240\nM300 S2793 P240\nM300 S2489 P960\nM300 S0 P120\nM300 S2217 P360\nM300 S2093 P120\nM300 S932 P120\nM300 S1661 P360\nM300 S932 P960",
+                  "description": "G-Code macro"
+               },
+               "verify_heater extruder": {
+                  "max_error": 120.0,
+                  "check_gain_time": 20.0,
+                  "heating_gain": 2.0,
+                  "hysteresis": 5.0
+               },
+               "gcode_macro blt_pos": {
+                  "gcode": "\nG90\nG1 X170 Y95 F2000\nG91",
+                  "description": "BLTouch Touchmode"
+               },
+               "gcode_macro jngl_supermario_death": {
+                  "gcode": "\nM300 S2093 P83\nM300 S2093 P83\nM300 S2093 P83\nM300 S0 P333\nM300 S987 P166\nM300 S2793 P166\nM300 S0 P166\nM300 S2793 P166\nM300 S2793 P250\nM300 S2637 P250\nM300 S2349 P166\nM300 S2093 P166\nM300 S0 P166\nM300 S1318 P166\nM300 S0 P166\nM300 S1046 P166",
+                  "description": "G-Code macro"
+               },
+               "stepper_z": {
+                  "homing_positive_dir": false,
+                  "homing_retract_dist": 5.0,
+                  "full_steps_per_rotation": 200,
+                  "endstop_pin": "probe:z_virtual_endstop",
+                  "rotation_distance": 8.0,
+                  "gear_ratio": [],
+                  "second_homing_speed": 2.5,
+                  "step_pin": "PB6",
+                  "position_min": -5.0,
+                  "microsteps": 16,
+                  "homing_speed": 5.0,
+                  "position_max": 260.0,
+                  "dir_pin": "!PB5",
+                  "homing_retract_speed": 5.0,
+                  "enable_pin": "!PC14"
+               },
+               "stepper_y": {
+                  "homing_positive_dir": false,
+                  "homing_retract_dist": 5.0,
+                  "position_endstop": -10.0,
+                  "full_steps_per_rotation": 200,
+                  "endstop_pin": "!PC5",
+                  "rotation_distance": 32.0,
+                  "gear_ratio": [],
+                  "second_homing_speed": 25.0,
+                  "step_pin": "PB8",
+                  "homing_speed": 50.0,
+                  "microsteps": 16,
+                  "position_min": -10.0,
+                  "dir_pin": "PB7",
+                  "position_max": 250.0,
+                  "homing_retract_speed": 50.0,
+                  "enable_pin": "!PC13"
+               },
+               "stepper_x": {
+                  "homing_positive_dir": false,
+                  "homing_retract_dist": 5.0,
+                  "position_endstop": -3.0,
+                  "full_steps_per_rotation": 200,
+                  "endstop_pin": "!PA7",
+                  "rotation_distance": 40.0,
+                  "gear_ratio": [],
+                  "second_homing_speed": 25.0,
+                  "step_pin": "PC2",
+                  "position_min": -3.0,
+                  "microsteps": 16,
+                  "homing_speed": 50.0,
+                  "position_max": 260.0,
+                  "dir_pin": "PB9",
+                  "homing_retract_speed": 50.0,
+                  "enable_pin": "!PC3"
+               },
+               "input_shaper": {
+                  "damping_ratio_x": 0.1,
+                  "damping_ratio_y": 0.1,
+                  "shaper_type_x": "mzv",
+                  "shaper_type_y": "2hump_ei",
+                  "shaper_freq_x": 67.6,
+                  "shaper_freq_y": 40.4,
+                  "shaper_type": "mzv"
+               },
+               "gcode_macro prime_line": {
+                  "gcode": "\nG1 X0.1 Y20 F5000.0             ; Move to start position\nG1 Z0.2 F240                    ; move nozzle and bed closer together\nG92 E0.0                        ; reset extruder\nG1 E5.0 F500                    ; pre-purge prime LENGTH SHOULD MATCH YOUR PRINT_END RETRACT\nG1 Y190 E15.0 F1500.0           ; intro line\nG1 X2.3 F5000                   ; move over a bit\nG1 Y10 E30 F1200.0              ; intro line\nG92 E0.0                        ; reset extruder\nG1 Z2.0 F3000                   ; Move Z Axis up little to prevent scratching of Heat Bed\nG1 X5 Y20 Z0.3 F5000.0          ; Move over to prevent blob squish",
+                  "description": "Do a prime line"
+               },
+               "gcode_macro m600": {
+                  "gcode": "\n{% set X = params.X|default(50)|float %}\n{% set Y = params.Y|default(0)|float %}\n{% set Z = params.Z|default(10)|float %}\nSAVE_GCODE_STATE NAME=M600_state\nPAUSE\nG91\nG1 E-.8 F2700\nG1 Z{Z}\nG90\nG1 X{X} Y{Y} F3000\nG91\nG1 E-50 F1000\nRESTORE_GCODE_STATE NAME=M600_state",
+                  "description": "G-Code macro"
+               },
+               "heater_fan extruder_fan": {
+                  "heater": [
+                     "extruder"
+                  ],
+                  "cycle_time": 0.01,
+                  "pin": "PB1",
+                  "off_below": 0.0,
+                  "heater_temp": 50.0,
+                  "shutdown_speed": 1.0,
+                  "fan_speed": 1.0,
+                  "max_power": 1.0,
+                  "kick_start_time": 0.1,
+                  "hardware_pwm": false
+               },
+               "gcode_macro blt_down": {
+                  "gcode": "\n{action_respond_info(\"Move Pin down\")}\nBLTOUCH_DEBUG COMMAND=pin_down",
+                  "description": "BLTouch Move down"
+               },
+               "gcode_macro start_print": {
+                  "gcode": "\n{% set t_extruder = params.T_EXTRUDER|default(0) %}\n{% set t_bed = params.T_BED|default(0) %}\nG28                                      ; Home\nZ_TILT_ADJUST\nG28\nM83                                      ; Extruder relative mode\nM104 S140                                ; Extruder heat up standby temp 140\nM190 S{t_bed}                            ; Bed heat up\nG1 X0 Y0 F2200\t\t\t\t\t\t\t ; Go to front\nM109 S{t_extruder}                       ; Extruder heat up to target temp\nG92 E0.0                                 ; Reset extruder length\nG90                                      ; Absolute positioning\nPRIME_LINE                               ; First move",
+                  "description": "All what needs to be done at print start"
+               },
+               "output_pin btn4_led": {
+                  "value": 0.0,
+                  "shutdown_value": 0.0,
+                  "pwm": false,
+                  "maximum_mcu_duration": 0.0,
+                  "pin": "rp_pico:gpio19"
+               },
+               "gcode_macro blt_test": {
+                  "gcode": "\n{action_respond_info(\"Move Pin down\")}\nBLTOUCH_DEBUG COMMAND=pin_down\nG4 P2000\n{action_respond_info(\"Pin is down\")}\n{action_respond_info(\"Move Pin up\")}\nBLTOUCH_DEBUG COMMAND=pin_up\nG4 P2000\n{action_respond_info(\"Pin is up\")}\n{action_respond_info(\"Move Pin down\")}\nBLTOUCH_DEBUG COMMAND=pin_down\nG4 P2000\n{action_respond_info(\"Pin is down\")}\n{action_respond_info(\"Touchmode On\")}\nBLTOUCH_DEBUG COMMAND=touch_mode\nG4 P2000\nQUERY_PROBE\n{action_respond_info(\"Pin Should show open\")}\nG4 P2000\n{action_respond_info(\"Pin Should show Move Pin a little bit up\")}\nG4 P3000\nQUERY_PROBE\n{action_respond_info(\"Pin Should show triggert\")}\nG4 P2000\n{action_respond_info(\"Move Pin up\")}\nBLTOUCH_DEBUG COMMAND=pin_up\nG4 P2000\n{action_respond_info(\"Pin is up\")}",
+                  "description": "BLTouch Test"
+               },
+               "gcode_macro 200": {
+                  "gcode": "\nSET_HEATER_TEMPERATURE HEATER=extruder TARGET=200",
+                  "description": "G-Code macro"
+               },
+               "output_pin btn6_led": {
+                  "value": 0.0,
+                  "shutdown_value": 0.0,
+                  "pwm": false,
+                  "maximum_mcu_duration": 0.0,
+                  "pin": "rp_pico:gpio17"
+               },
+               "printer": {
+                  "square_corner_velocity": 5.0,
+                  "move_flush_time": 0.05,
+                  "max_accel": 1500.0,
+                  "buffer_time_start": 0.25,
+                  "buffer_time_low": 1.0,
+                  "max_z_accel": 100.0,
+                  "max_velocity": 150.0,
+                  "max_z_velocity": 5.0,
+                  "kinematics": "cartesian",
+                  "max_accel_to_decel": 1500.0,
+                  "buffer_time_high": 2.0
+               },
+               "gcode_macro blt_tm": {
+                  "gcode": "\n{action_respond_info(\"BLT Touchmode on\")}\nBLTOUCH_DEBUG COMMAND=touch_mode",
+                  "description": "BLTouch Touchmode"
+               },
+               "gcode_macro resume": {
+                  "gcode": "\n{% set E = printer[\"gcode_macro PAUSE\"].extrude|float %}\n{%set min_extrude_temp = printer.configfile.settings[\"extruder\"][\"min_extrude_temp\"]|int %}\n{%set act_extrude_temp = printer.extruder.temperature|int %}\n{% if 'VELOCITY' in params|upper %}\n{% set get_params = ('VELOCITY=' + params.VELOCITY)  %}\n{%else %}\n{% set get_params = \"\" %}\n{% endif %}\n{% if act_extrude_temp > min_extrude_temp %}\nG91\nG1 E{E} F2100\n{% else %}\n{action_respond_info(\"Extruder not hot enough\")}\n{% endif %}\nRESUME_BASE {get_params}",
+                  "description": "Resume the actual running print",
+                  "rename_existing": "RESUME_BASE"
+               },
+               "gcode_macro jngl_starwars": {
+                  "gcode": "\nM300 S1396 P166\nM300 S1396 P166\nM300 S1396 P166\nM300 S932 P1000\nM300 S2793 P1000\nM300 S2489 P166\nM300 S2349 P166\nM300 S2093 P166\nM300 S1864 P1000\nM300 S2793 P500\nM300 S2489 P166\nM300 S2349 P166\nM300 S2093 P166\nM300 S1864 P1000\nM300 S2793 P500\nM300 S2489 P166\nM300 S2349 P166\nM300 S2489 P166\nM300 S2093 P666\nM300 S0 P333\nM300 S1396 P166\nM300 S1396 P166\nM300 S1396 P166\nM300 S932 P1000\nM300 S2793 P1000\nM300 S2489 P166\nM300 S2349 P166\nM300 S2093 P166\nM300 S1864 P1000\nM300 S2793 P500\nM300 S2489 P166\nM300 S2349 P166\nM300 S2093 P166\nM300 S1864 P1000\nM300 S2793 P500\nM300 S2489 P166\nM300 S2349 P166\nM300 S2489 P166\nM300 S2093 P666",
+                  "description": "G-Code macro"
+               },
+               "gcode_macro jngl_imperial_march_full": {
+                  "gcode": "\nM300 S392 P436\nM300 S0 P109\nM300 S392 P436\nM300 S0 P109\nM300 S392 P436\nM300 S0 P109\nM300 S311 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S392 P436\nM300 S0 P109\nM300 S311 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S392 P872\nM300 S0 P218\nM300 S587 P436\nM300 S0 P109\nM300 S587 P436\nM300 S0 P109\nM300 S587 P436\nM300 S0 P109\nM300 S622 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S370 P436\nM300 S0 P109\nM300 S311 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S392 P872\nM300 S0 P218\nM300 S784 P436\nM300 S0 P109\nM300 S392 P326\nM300 S0 P81\nM300 S392 P108\nM300 S0 P27\nM300 S784 P436\nM300 S0 P109\nM300 S740 P326\nM300 S0 P81\nM300 S698 P108\nM300 S0 P27\nM300 S659 P108\nM300 S0 P27\nM300 S622 P108\nM300 S0 P27\nM300 S659 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S415 P217\nM300 S0 P54\nM300 S554 P436\nM300 S0 P109\nM300 S523 P326\nM300 S0 P81\nM300 S494 P108\nM300 S0 P27\nM300 S466 P108\nM300 S0 P27\nM300 S440 P108\nM300 S0 P27\nM300 S466 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S311 P217\nM300 S0 P54\nM300 S370 P436\nM300 S0 P109\nM300 S311 P326\nM300 S0 P81\nM300 S370 P108\nM300 S0 P27\nM300 S466 P436\nM300 S0 P109\nM300 S392 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S587 P872\nM300 S0 P218\nM300 S784 P436\nM300 S0 P109\nM300 S392 P326\nM300 S0 P81\nM300 S392 P108\nM300 S0 P27\nM300 S784 P436\nM300 S0 P109\nM300 S740 P326\nM300 S0 P81\nM300 S698 P108\nM300 S0 P27\nM300 S659 P108\nM300 S0 P27\nM300 S622 P108\nM300 S0 P27\nM300 S659 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S415 P217\nM300 S0 P54\nM300 S554 P436\nM300 S0 P109\nM300 S523 P326\nM300 S0 P81\nM300 S494 P108\nM300 S0 P27\nM300 S466 P108\nM300 S0 P27\nM300 S440 P108\nM300 S0 P27\nM300 S466 P21M300 S2093 P240\nM300 S2093 P240\nM300 S932 P240\nM300 S2093 P240\nM300 S0 P240\nM300 S1567 P240\nM300 S0 P240\nM300 S1567 P240\nM300 S2093 P240\nM300 S2793 P240\nM300 S2637 P240\nM300 S2093 P240\nM300 S0 P960\nM300 S2093 P240\nM300 S2093 P240\nM300 S932 P240\nM300 S2093 P240\nM300 S0 P240\nM300 S1567 P240\nM300 S0 P240\nM300 S1567 P240\nM300 S2093 P240\nM300 S2793 P240\nM300 S2637 P240\nM300 S2093 P240\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S311 P217\nM300 S0 P54\nM300 S370 P436\nM300 S0 P109\nM300 S311 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S392 P436\nM300 S0 P109\nM300 S311 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S392 P872\nM300 S0 P218\nM300 S392 P436\nM300 S0 P109\nM300 S392 P436\nM300 S0 P109\nM300 S392 P436\nM300 S0 P109\nM300 S311 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S392 P436\nM300 S0 P109\nM300 S311 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S392 P872\nM300 S0 P218\nM300 S587 P436\nM300 S0 P109\nM300 S587 P436\nM300 S0 P109\nM300 S587 P436\nM300 S0 P109\nM300 S622 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S370 P436\nM300 S0 P109\nM300 S311 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S392 P872\nM300 S0 P218\nM300 S784 P436\nM300 S0 P109\nM300 S392 P326\nM300 S0 P81\nM300 S392 P108\nM300 S0 P27\nM300 S784 P436\nM300 S0 P109\nM300 S740 P326\nM300 S0 P81\nM300 S698 P108\nM300 S0 P27\nM300 S659 P108\nM300 S0 P27\nM300 S622 P108\nM300 S0 P27\nM300 S659 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S415 P217\nM300 S0 P54\nM300 S554 P436\nM300 S0 P109\nM300 S523 P326\nM300 S0 P81\nM300 S494 P108\nM300 S0 P27\nM300 S466 P108\nM300 S0 P27\nM300 S440 P108\nM300 S0 P27\nM300 S466 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S311 P217\nM300 S0 P54\nM300 S370 P436\nM300 S0 P109\nM300 S311 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S392 P436\nM300 S0 P109\nM300 S311 P326\nM300 S0 P81\nM300 S466 P108\nM300 S0 P27\nM300 S392 P872\nM300 S0 P218\nM300 S0 P436\nM300 S0 P109\nM300 S294 P217\nM300 S0 P54\nM300 S311 P217\nM300 S0 P54\nM300 S262 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S466 P217\nM300 S0 P54\nM300 S440 P217\nM300 S0 P54\nM300 S370 P217\nM300 S0 P54\nM300 S587 P217\nM300 S0 P54\nM300 S554 P217\nM300 S0 P54\nM300 S440 P217\nM300 S0 P54\nM300 S523 P217\nM300 S0 P54\nM300 S466 P217\nM300 S0 P54\nM300 S370 P217\nM300 S0 P54\nM300 S311 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S294 P217\nM300 S0 P54\nM300 S311 P217\nM300 S0 P54\nM300 S262 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S466 P217\nM300 S0 P54\nM300 S440 P217\nM300 S0 P54\nM300 S370 P217\nM300 S0 P54\nM300 S784 P217\nM300 S0 P54\nM300 S587 P217\nM300 S0 P54\nM300 S466 P217\nM300 S0 P54\nM300 S415 P217\nM300 S0 P54\nM300 S311 P217\nM300 S0 P54\nM300 S247 P217\nM300 S0 P54\nM300 S208 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S294 P217\nM300 S0 P54\nM300 S311 P217\nM300 S0 P54\nM300 S262 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S466 P217\nM300 S0 P54\nM300 S440 P217\nM300 S0 P54\nM300 S370 P217\nM300 S0 P54\nM300 S587 P217\nM300 S0 P54\nM300 S554 P217\nM300 S0 P54\nM300 S440 P217\nM300 S0 P54\nM300 S523 P217\nM300 S0 P54\nM300 S466 P217\nM300 S0 P54\nM300 S370 P217\nM300 S0 P54\nM300 S311 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S311 P217\nM300 S0 P54\nM300 S330 P217\nM300 S0 P54\nM300 S277 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S494 P217\nM300 S0 P54\nM300 S466 P217\nM300 S0 P54\nM300 S392 P217\nM300 S0 P54\nM300 S831 P217\nM300 S0 P54\nM300 S622 P217\nM300 S0 P54\nM300 S494 P217\nM300 S0 P54\nM300 S440 P217\nM300 S0 P54\nM300 S330 P217\nM300 S0 P54\nM300 S262 P217\nM300 S0 P54\nM300 S220 P217\nM300 S0 P54\nM300 S440 P436\nM300 S0 P109\nM300 S440 P436\nM300 S0 P109\nM300 S440 P436\nM300 S0 P109\nM300 S349 P326\nM300 S0 P81\nM300 S523 P108\nM300 S0 P27\nM300 S440 P436\nM300 S0 P109\nM300 S349 P326\nM300 S0 P81\nM300 S523 P108\nM300 S0 P27\nM300 S440 P872\nM300 S0 P218\nM300 S659 P436\nM300 S0 P109\nM300 S659 P436\nM300 S0 P109\nM300 S659 P436\nM300 S0 P109\nM300 S698 P326\nM300 S0 P81\nM300 S523 P108\nM300 S0 P27\nM300 S415 P436\nM300 S0 P109\nM300 S349 P326\nM300 S0 P81\nM300 S523 P108\nM300 S0 P27\nM300 S440 P872\nM300 S0 P218\nM300 S880 P436\nM300 S0 P109\nM300 S440 P326\nM300 S0 P81\nM300 S440 P108\nM300 S0 P27\nM300 S880 P436\nM300 S0 P109\nM300 S831 P326\nM300 S0 P81\nM300 S784 P108\nM300 S0 P27\nM300 S740 P108\nM300 S0 P27\nM300 S698 P108\nM300 S0 P27\nM300 S740 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S466 P217\nM300 S0 P54\nM300 S622 P436\nM300 S0 P109\nM300 S587 P326\nM300 S0 P81\nM300 S554 P108\nM300 S0 P27\nM300 S523 P108\nM300 S0 P27\nM300 S494 P108\nM300 S0 P27\nM300 S523 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S349 P217\nM300 S0 P54\nM300 S415 P436\nM300 S0 P109\nM300 S349 P326\nM300 S0 P81\nM300 S523 P108\nM300 S0 P27\nM300 S440 P436\nM300 S0 P109\nM300 S349 P326\nM300 S0 P81\nM300 S523 P108\nM300 S0 P27\nM300 S440 P872\nM300 S0 P218\nM300 S880 P436\nM300 S0 P109\nM300 S440 P326\nM300 S0 P81\nM300 S440 P108\nM300 S0 P27\nM300 S880 P436\nM300 S0 P109\nM300 S831 P326\nM300 S0 P81\nM300 S784 P108\nM300 S0 P27\nM300 S740 P108\nM300 S0 P27\nM300 S698 P108\nM300 S0 P27\nM300 S740 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S466 P217\nM300 S0 P54\nM300 S622 P436\nM300 S0 P109\nM300 S587 P326\nM300 S0 P81\nM300 S554 P108\nM300 S0 P27\nM300 S523 P108\nM300 S0 P27\nM300 S494 P108\nM300 S0 P27\nM300 S523 P217\nM300 S0 P54\nM300 S0 P436\nM300 S0 P109\nM300 S349 P217\nM300 S0 P54\nM300 S415 P436\nM300 S0 P109\nM300 S349 P326\nM300 S0 P81\nM300 S523 P108\nM300 S0 P27\nM300 S440 P436\nM300 S0 P109\nM300 S349 P326\nM300 S0 P81\nM300 S523 P108\nM300 S0 P27\nM300 S440 P653\nM300 S0 P163",
+                  "description": "G-Code macro"
+               },
+               "safe_z_home": {
+                  "z_hop_speed": 15.0,
+                  "move_to_previous": false,
+                  "speed": 50.0,
+                  "home_xy_position": [
+                     175.5,
+                     100.0
+                  ],
+                  "z_hop": 10.0
+               },
+               "verify_heater heater_bed": {
+                  "max_error": 120.0,
+                  "check_gain_time": 60.0,
+                  "heating_gain": 2.0,
+                  "hysteresis": 5.0
+               },
+               "gcode_button btn5": {
+                  "release_gcode": "",
+                  "pin": "^!rp_pico:gpio10",
+                  "press_gcode": "BTN5"
+               },
+               "gcode_button btn6": {
+                  "release_gcode": "",
+                  "pin": "^!rp_pico:gpio11",
+                  "press_gcode": "BTN6"
+               },
+               "gcode_button btn7": {
+                  "release_gcode": "",
+                  "pin": "^!rp_pico:gpio12",
+                  "press_gcode": "BTN7"
+               },
+               "fan": {
+                  "cycle_time": 0.01,
+                  "pin": "PA0",
+                  "off_below": 0.0,
+                  "shutdown_speed": 0.0,
+                  "max_power": 1.0,
+                  "kick_start_time": 0.1,
+                  "hardware_pwm": false
+               },
+               "gcode_button btn1": {
+                  "release_gcode": "",
+                  "pin": "^!rp_pico:gpio6",
+                  "press_gcode": "M112"
+               },
+               "gcode_button btn2": {
+                  "release_gcode": "",
+                  "pin": "^!rp_pico:gpio7",
+                  "press_gcode": "BTN2"
+               },
+               "gcode_button btn3": {
+                  "release_gcode": "",
+                  "pin": "^!rp_pico:gpio8",
+                  "press_gcode": "BTN3"
+               },
+               "mcu rp_pico": {
+                  "baud": 250000,
+                  "restart_method": "command",
+                  "max_stepper_error": 2.5e-05,
+                  "serial": "/dev/serial/by-id/usb-Klipper_rp2040_E660C0621359AD30-if00"
+               },
+               "mcu": {
+                  "baud": 250000,
+                  "restart_method": "command",
+                  "serial": "/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0",
+                  "max_stepper_error": 2.5e-05
+               },
+               "stepper_z1": {
+                  "full_steps_per_rotation": 200,
+                  "rotation_distance": 8.0,
+                  "gear_ratio": [],
+                  "step_pin": "PC0",
+                  "microsteps": 16,
+                  "dir_pin": "!PC1",
+                  "enable_pin": "!PC15"
+               },
+               "gcode_button btn8": {
+                  "release_gcode": "",
+                  "pin": "^!rp_pico:gpio13",
+                  "press_gcode": "BTN8"
+               },
+               "output_pin btn5_led": {
+                  "shutdown_value": 0.0,
+                  "pwm": false,
+                  "pin": "rp_pico:gpio18",
+                  "value": 0.0,
+                  "maximum_mcu_duration": 0.0
+               },
+               "gcode_macro motor_aus": {
+                  "gcode": "\nM18",
+                  "description": "G-Code macro"
+               },
+               "gcode_macro jngl_coca_cola": {
+                  "gcode": "\nM300 S2959 P240\nM300 S2959 P240\nM300 S2959 P240\nM300 S2959 P240\nM300 S3135 P480\nM300 S2959 P240\nM300 S2637 P480\nM300 S2637 P240\nM300 S1760 P240\nM300 S2959 P480\nM300 S2349 P480\nM300 S0 P960",
+                  "description": "G-Code macro"
+               },
+               "gcode_button btn4": {
+                  "release_gcode": "",
+                  "pin": "^!rp_pico:gpio9",
+                  "press_gcode": "BTN4"
+               },
+               "gcode_macro jngl_deutschlandlied": {
+                  "gcode": "\nM300 S1567 P750\nM300 S880 P187\nM300 S987 P375\nM300 S880 P375\nM300 S2093 P375\nM300 S987 P375\nM300 S880 P187\nM300 S1479 P187\nM300 S1567 P375\nM300 S2637 P375\nM300 S2349 P375\nM300 S2093 P375\nM300 S987 P375\nM300 S880 P375\nM300 S987 P187\nM300 S1567 P187\nM300 S2349 P750\nM300 S1567 P750\nM300 S880 P187\nM300 S987 P375\nM300 S880 P375\nM300 S2093 P375\nM300 S987 P375\nM300 S880 P187\nM300 S1479 P187\nM300 S1567 P375\nM300 S2637 P375\nM300 S2349 P375\nM300 S2093 P375\nM300 S987 P375\nM300 S880 P375\nM300 S987 P187\nM300 S1567 P187\nM300 S2349 P750\nM300 S880 P375\nM300 S987 P375\nM300 S880 P187\nM300 S1479 P187\nM300 S1174 P375\nM300 S2093 P375\nM300 S987 P375\nM300 S880 P187\nM300 S1479 P187\nM300 S1174 P375\nM300 S2349 P375\nM300 S2093 P375\nM300 S987 P750\nM300 S987 P187\nM300 S2217 P375\nM300 S2217 P187\nM300 S2349 P187\nM300 S2349 P750\nM300 S3135 P750\nM300 S2959 P187\nM300 S2959 P187\nM300 S2637 P187\nM300 S2349 P375\nM300 S2637 P750\nM300 S2349 P187\nM300 S2349 P187\nM300 S2093 P187\nM300 S987 P375\nM300 S880 P750\nM300 S987 P93\nM300 S2093 P93\nM300 S2349 P187\nM300 S2637 P187\nM300 S2093 P187\nM300 S880 P187\nM300 S1567 P750\nM300 S987 P187\nM300 S880 P187\nM300 S1567 P750",
+                  "description": "G-Code macro"
+               },
+               "bed_mesh": {
+                  "horizontal_move_z": 7.0,
+                  "mesh_pps": [
+                     2,
+                     3
+                  ],
+                  "algorithm": "bicubic",
+                  "mesh_max": [
+                     207.0,
+                     227.0
+                  ],
+                  "fade_start": 1.0,
+                  "bicubic_tension": 0.2,
+                  "fade_end": 0.0,
+                  "mesh_min": [
+                     13.0,
+                     7.0
+                  ],
+                  "split_delta_z": 0.025,
+                  "probe_count": [
+                     7,
+                     7
+                  ],
+                  "speed": 120.0,
+                  "move_check_distance": 5.0
+               },
+               "temperature_fan mainboard": {
+                  "control": "pid",
+                  "pid_kp": 1.0,
+                  "max_speed": 1.0,
+                  "cycle_time": 0.01,
+                  "pin": "mcu:PA14",
+                  "off_below": 0.4,
+                  "pid_deriv_time": 2.0,
+                  "shutdown_speed": 1.0,
+                  "min_speed": 0.3,
+                  "sensor_type": "temperature_mcu",
+                  "target_temp": 50.0,
+                  "sensor_mcu": "mcu",
+                  "pid_kd": 1.0,
+                  "kick_start_time": 0.5,
+                  "min_temp": 20.0,
+                  "pid_ki": 1.0,
+                  "hardware_pwm": false,
+                  "max_temp": 100.0,
+                  "max_power": 1.0
+               },
+               "gcode_macro jngl_startrek": {
+                  "gcode": "\nM300 S1396 P714\nM300 S932 P238\nM300 S2489 P1428\nM300 S2349 P476\nM300 S932 P357\nM300 S1567 P357\nM300 S2093 P357\nM300 S2793 P952",
+                  "description": "G-Code macro"
+               },
+               "idle_timeout": {
+                  "gcode": "\n{% if 'heaters' in printer %}\n   TURN_OFF_HEATERS\n{% endif %}\nM84\n",
+                  "timeout": 600.0
+               },
+               "gcode_macro pause": {
+                  "gcode": "\n{% set E = printer[\"gcode_macro PAUSE\"].extrude|float %}\n{% set x_park = printer.toolhead.axis_maximum.x|float - 5.0 %}\n{% set y_park = printer.toolhead.axis_maximum.y|float - 5.0 %}\n{% set max_z = printer.toolhead.axis_maximum.z|float %}\n{% set act_z = printer.toolhead.position.z|float %}\n{% if act_z < (max_z - 2.0) %}\n{% set z_safe = 2.0 %}\n{% else %}\n{% set z_safe = max_z - act_z %}\n{% endif %}\n{%set min_extrude_temp = printer.configfile.settings[\"extruder\"][\"min_extrude_temp\"]|int %}\n{%set act_extrude_temp = printer.extruder.temperature|int %}\nPAUSE_BASE\nG91\n{% if act_extrude_temp > min_extrude_temp %}\nG1 E-{E} F2100\n{% else %}\n{action_respond_info(\"Extruder not hot enough\")}\n{% endif %}\n{% if \"xyz\" in printer.toolhead.homed_axes %}\nG1 Z{z_safe} F900\nG90\nG1 X{x_park} Y{y_park} F6000\n{% else %}\n{action_respond_info(\"Printer not homed\")}\n{% endif %}",
+                  "description": "Pause the actual running print",
+                  "variable_extrude": "1.0",
+                  "rename_existing": "PAUSE_BASE"
+               },
+               "output_pin beeper_pin": {
+                  "shutdown_value": 0.0,
+                  "scale": 1.0,
+                  "cycle_time": 0.001,
+                  "pin": "PB15",
+                  "maximum_mcu_duration": 0.0,
+                  "value": 0.0,
+                  "hardware_pwm": false,
+                  "pwm": true
+               },
+               "gcode_macro m300": {
+                  "gcode": "\n{% set S = params.S|default(1000)|int %}\n{% set P = params.P|default(100)|int %}\nSET_PIN PIN=beeper_pin VALUE=0.85 CYCLE_TIME={ 1.0/S if S > 0 else 1 }\nG4 P{P}\nSET_PIN PIN=beeper_pin VALUE=0",
+                  "description": "G-Code macro"
+               },
+               "gcode_macro pa_calibration": {
+                  "gcode": "\nSET_VELOCITY_LIMIT SQUARE_CORNER_VELOCITY=1 ACCEL=500\nTUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.020",
+                  "description": "Adjust Velocity and PA parameters for bowden extruder"
+               },
+               "filament_switch_sensor runout": {
+                  "runout_gcode": "",
+                  "pause_delay": 0.5,
+                  "switch_pin": "PA5",
+                  "pause_on_runout": true,
+                  "event_delay": 3.0
+               },
+               "gcode_macro wartungsposition": {
+                  "gcode": "\nG28\nG90\nG1 X110 Y120 Z105 F1000\nG91\nM140 S0\nM104 S0\nM106 S0",
+                  "description": "G-Code macro"
+               },
+               "bltouch": {
+                  "samples_tolerance_retries": 0,
+                  "sensor_pin": "^PB10",
+                  "x_offset": -53.0,
+                  "sample_retract_dist": 2.0,
+                  "samples_result": "average",
+                  "samples_tolerance": 0.1,
+                  "control_pin": "PB11",
+                  "lift_speed": 5.0,
+                  "y_offset": 15.0,
+                  "samples": 1,
+                  "pin_up_reports_not_triggered": true,
+                  "pin_move_time": 0.68,
+                  "probe_with_touch_mode": false,
+                  "pin_up_touch_mode_reports_triggered": true,
+                  "stow_on_each_sample": true,
+                  "speed": 5.0,
+                  "z_offset": 2.265
+               },
+               "display": {
+                  "menu_reverse_navigation": false,
+                  "click_pin": "^rp_pico:gpio22",
+                  "d6_pin": "rp_pico:gpio3",
+                  "d4_pin": "rp_pico:gpio5",
+                  "encoder_pins": "rp_pico:gpio26,rp_pico:gpio27",
+                  "lcd_type": "hd44780",
+                  "hd44780_pin_delay": 0.00055,
+                  "d5_pin": "rp_pico:gpio4",
+                  "e_pin": "rp_pico:gpio1",
+                  "hd44780_init_delay": 0.4,
+                  "rs_pin": "rp_pico:gpio0",
+                  "encoder_steps_per_detent": 4,
+                  "hd44780_protocol_init": true,
+                  "encoder_fast_rate": 0.03,
+                  "menu_root": "__main",
+                  "display_group": "_default_20x4",
+                  "d7_pin": "rp_pico:gpio2",
+                  "line_length": 20,
+                  "menu_timeout": 30
+               },
+               "gcode_macro pid_extruder": {
+                  "gcode": "\nPID_CALIBRATE HEATER=extruder TARGET=200",
+                  "description": "G-Code macro"
+               },
+               "extruder": {
+                  "control": "pid",
+                  "pullup_resistor": 4700.0,
+                  "max_extrude_only_velocity": 39.912162055371645,
+                  "rotation_distance": 22.57338315,
+                  "max_extrude_only_distance": 50.0,
+                  "sensor_type": "ATC Semitec 104GT-2",
+                  "min_temp": 0.0,
+                  "enable_pin": "!PA15",
+                  "pressure_advance": 0.0,
+                  "max_extrude_cross_section": 50.0,
+                  "pwm_cycle_time": 0.1,
+                  "dir_pin": "!PB3",
+                  "pid_kp": 30.617,
+                  "instantaneous_corner_velocity": 1.0,
+                  "full_steps_per_rotation": 200,
+                  "heater_pin": "PA1",
+                  "smooth_time": 1.0,
+                  "pid_ki": 1.944,
+                  "filament_diameter": 1.75,
+                  "gear_ratio": [
+                     [
+                        50.0,
+                        17.0
+                     ]
+                  ],
+                  "sensor_pin": "PC4",
+                  "nozzle_diameter": 0.4,
+                  "pid_kd": 120.554,
+                  "pressure_advance_smooth_time": 0.04,
+                  "step_pin": "PB4",
+                  "inline_resistor": 0.0,
+                  "max_power": 1.0,
+                  "microsteps": 16,
+                  "min_extrude_temp": 170.0,
+                  "max_extrude_only_accel": 399.12162055371647,
+                  "max_temp": 260.0
+               },
+               "gcode_macro led_on": {
+                  "gcode": "\nSET_PIN PIN=LED VALUE=1.00",
+                  "description": "Turn on LED (Extruder)"
+               },
+               "save_variables": {
+                  "filename": "/home/pi/klipper_vars"
+               },
+               "gcode_macro led_off": {
+                  "gcode": "\nSET_PIN PIN=LED VALUE=0.00",
+                  "description": "Turn off LED (Extruder)"
+               }
+            }
+         },
+         "fan": {
+            "speed": 0.38823529411764707
          }
       }
    }

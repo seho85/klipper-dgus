@@ -29,3 +29,8 @@ class KeyCodes(IntEnum):
     HomeZ = 0x0017
     HomeAll = 0x0018
     
+    RETRACT = 0x0019
+    EXTRUDE = 0x0020
+
+    LED_ON = 0x0021
+    LED_OFF = 0x0022

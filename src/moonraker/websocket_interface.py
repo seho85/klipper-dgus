@@ -127,7 +127,7 @@ class WebsocketInterface(JsonSerializable):
                     "id": WebsocktRequestId.QUERY_SERVER_INFO
                 }
 
-                print("send cyclic query...")
+                #print("send cyclic query...")
 
             
                 self.ws_app.send(json.dumps(query_server_info_json))
@@ -187,6 +187,7 @@ class WebsocketInterface(JsonSerializable):
 
             if response["id"] == WebsocktRequestId.QUERY_SERVER_INFO:
                 #print(json.dumps(response, indent=3))
+
                 #self.server_info = response["resut"]
                 with self.json_resouce_lock:
                     json_merged = merge(self.json_data_modell["server_info"],response["result"] )
@@ -194,8 +195,8 @@ class WebsocketInterface(JsonSerializable):
 
                     #print(json.dumps(response, indent=3))
 
-            if response["id"] == 5555:
-                print(json.dumps(response, indent=3))
+            #if response["id"] == 8000:
+            #    print(json.dumps(response, indent=3))
 
 
             if self._current_request is not None:
@@ -208,7 +209,7 @@ class WebsocketInterface(JsonSerializable):
         # The subscribed objects are only published when the value has changed.
         # e.g. bed_temperature target set to 50°, extruder temperature has changed, bed_temperature has changed, a.s.o.
         if response['method'] == "notify_status_update":
-            #print(json.dumps(response, indent=2))
+            #print(json.dumps(response, indent=3))
             #TODO: Resource locking - possible data race!
             json_pub_data = response["params"][0]
             json_merged = merge(self.json_data_modell, json_pub_data)
