@@ -24,7 +24,6 @@ from jsonmerge import merge
 from queue import Queue
 
 from dgus.display.serialization.json_serializable import JsonSerializable
-from globals import CONFIG_DIRECTORY
 from moonraker.request_id import WebsocktRequestId
 from moonraker.moonraker_request import MoonrakerRequest
 
@@ -95,17 +94,6 @@ class WebsocketInterface(JsonSerializable):
             on_message=on_message,
             on_open=on_open
         )
-
-        #self.load_inital_datamodell()
-
-      
-    def load_inital_datamodell(self):
-        # we load an initial datamodell that an actual json structure to query from exists
-        display_json_file = os.path.join(CONFIG_DIRECTORY, "initial_datamodell.json")
-
-        with open(display_json_file) as json_file:
-            json_data = json.load(json_file)
-            self.json_data_modell = json_data
 
 
     def start(self):
@@ -243,13 +231,13 @@ class WebsocketInterface(JsonSerializable):
         self.ws_app.send(json.dumps(self.subscription_request))
 
     def write_json_config(self):
-        websocket_json_config = os.path.join(CONFIG_DIRECTORY, "websocket.json")
+        websocket_json_config = os.path.join(os.getcwd(), "config", "websocket.json")
 
         with open(websocket_json_config, "w") as json_file:
             json_file.write(json.dumps(self.to_json(), indent=3))
 
     def read_json_config(self):
-        websocket_json_config = os.path.join(CONFIG_DIRECTORY, "websocket.json")
+        websocket_json_config = os.path.join(os.getcwd(), "config", "websocket.json")
         with open(websocket_json_config) as json_file:
             json_data = json.load(json_file)
             return self.from_json(json_data)
