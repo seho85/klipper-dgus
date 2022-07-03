@@ -130,8 +130,6 @@ class FanMask(Mask):
                 elif speed_in_display_changed:
                     self.write_fan_speed_to_klipper(fan_speed_display)
             
-
-            
             last_fan_speed_klipper = fan_speed_klipper
             last_fan_speed_display = fan_speed_display
 
@@ -182,14 +180,8 @@ class FanMask(Mask):
         read_fan_speed_request = Request(get_read_fan_speed_request, fan_speed_read_callback, "Read Fan Speed")
         self._com_interface.queue_request(read_fan_speed_request)
 
-        request_time_out = datetime.datetime.now() + datetime.timedelta(seconds=2)
-       
-
         while not fan_speed_has_been_read:
             sleep(0.5)
-            if datetime.datetime.now() > request_time_out:
-                print("read_fan_speed_from_display timed out....")
-                return
 
         return fan_speed
 
@@ -235,6 +227,13 @@ class FanMask(Mask):
 
     def mask_suppressed(self):
         print(f'Mask {self.mask_no} is now suppressed')
+        
         self.run_fan_state_query_thread = False
-        sleep(1)
-        self.fan_state_query_thread.join()
+        def close_thread_func():
+            self.fan_state_query_thread.join()
+
+        close_thread = Thread(target=close_thread_func)
+        close_thread.start()
+       
+        
+        
