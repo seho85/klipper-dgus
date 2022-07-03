@@ -43,7 +43,7 @@ class TuningMask(Mask):
 
     query_slider_value_thread : Thread = None
     run_query_slider_value = False
-    query_slider_value_thread_finished = False
+    
 
     SPEED_FACTOR = 0
     EXTRUSION_FACTOR = 1
@@ -161,11 +161,6 @@ class TuningMask(Mask):
 
         self.web_sock.ws_app.send(json.dumps(adjust_zoffset_rpc_request))
 
-
-        
-
-
-
     def write_factor_to_display(self, address, speed_val):
         
         print(f"write_factor_to_display ADDR: {address} VAL:{speed_val} - started")
@@ -186,14 +181,10 @@ class TuningMask(Mask):
         req = Request(get_set_factor_on_display_request, set_factor_on_display_response, "Set Actual Speed Factor")
         self._com_interface.queue_request(req)
 
-        request_time_out = datetime.datetime.now() + datetime.timedelta(seconds=2)
+        
         while not factor_wrote_to_display:
             sleep(0.5)
-
-            if datetime.datetime.now() > request_time_out:
-                print("write_factor_to_display timed out....")
-                return
-
+        
         print(f"write_factor_to_display ADDR: {address} VAL:{speed_val} - finished")
 
         
@@ -220,14 +211,8 @@ class TuningMask(Mask):
 
         self._com_interface.queue_request(req_query_speed_factor)
 
-        request_time_out = datetime.datetime.now() + datetime.timedelta(seconds=2)
-
         while not factor_was_read:
             sleep(0.5)
-
-            if datetime.datetime.now() > request_time_out:
-                print("read_factor timed out....")
-                return
 
         print(f'read_factor_from_display addr: {address} - finished..')
         return read_factor_float
@@ -243,7 +228,6 @@ class TuningMask(Mask):
         def response_send_cb():
             pass
             
-                
         set_speed_factor_rpc_request = {
             "jsonrpc": "2.0",
             "method": "printer.gcode.script",
@@ -285,8 +269,6 @@ class TuningMask(Mask):
 
     def query_slider_value_thread_function(self):
                        
-        self.query_slider_value_thread_finished = False
-
         begin_speed_factor = float(self.web_sock.json_data_modell["gcode_move"]["speed_factor"])
         self.write_factor_to_display(DataAddress.SPEED_FACTOR, begin_speed_factor)
 
@@ -304,28 +286,22 @@ class TuningMask(Mask):
             speed_factor_display = self.read_factor_from_display(DataAddress.SPEED_FACTOR)
             speed_factor_klipper = float(self.web_sock.json_data_modell["gcode_move"]["speed_factor"])
 
-            if speed_factor_display is not None:
-                self.handle_speed_factor(speed_factor_display, speed_factor_klipper, last_speed_factor_display, last_speed_factor_klipper)
-            else:
-                continue
+            self.handle_speed_factor(speed_factor_display, speed_factor_klipper, last_speed_factor_display, last_speed_factor_klipper)
 
             last_speed_factor_klipper = speed_factor_klipper
             last_speed_factor_display = speed_factor_display
 
             extrusion_factor_klipper = float(self.web_sock.json_data_modell["gcode_move"]["extrude_factor"])
-            extrusion_factor_display = speed_factor_display = self.read_factor_from_display(DataAddress.EXTRUSION_FACTOR)
+            extrusion_factor_display = self.read_factor_from_display(DataAddress.EXTRUSION_FACTOR)
 
-            if speed_factor_display is not None:
-                self.handle_extrusion_factor(extrusion_factor_display, extrusion_factor_klipper, last_extrusion_factor_display, last_extrusion_factor_klipper)
-            else:
-                continue
+            self.handle_extrusion_factor(extrusion_factor_display, extrusion_factor_klipper, last_extrusion_factor_display, last_extrusion_factor_klipper)
+            
 
             last_extrusion_factor_display = extrusion_factor_display
             last_extrusion_factor_klipper = extrusion_factor_klipper
          
             sleep(0.5)
 
-        self.query_slider_value_thread_finished = True
         print("tuning mask refresh thread ended...")
 
     def handle_speed_factor(self, speed_factor_display, speed_factor_klipper,last_speed_factor_display, last_speed_factor_klipper):
@@ -374,11 +350,11 @@ class TuningMask(Mask):
     def mask_suppressed(self):
         print(f'Tuning Mask {self.mask_no} is now suppressed')
         self.run_query_slider_value = False
-        #TODO: If we do not sleep here, query_slider_value_thread will not be joined - Why?
-        #sleep(2)
-        while not self.query_slider_value_thread_finished:
-            sleep(0.5)
+        
+        def close_thread_func():
+            self.query_slider_value_thread.join()
 
-        self.query_slider_value_thread.join()
+        close_thread = Thread(target=close_thread_func)
+        close_thread.start()
 
     
