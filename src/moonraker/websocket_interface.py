@@ -138,12 +138,6 @@ class WebsocketInterface(JsonSerializable):
         self.thread.join()
         print("Stopped Websocket Communication....")
 
-        
-        
-        
-
-        
-        
     def ws_on_open(self, ws_app):
         self.open = True
         print("Websocket open...")
@@ -204,9 +198,23 @@ class WebsocketInterface(JsonSerializable):
             with self.json_resouce_lock:
                 self.json_data_modell = json_merged
 
-            
+
+                   
             #print(json.dumps(self.json_data_modell["toolhead"]["homed_axes"], indent=3))
             #print(json.dumps(json_merged, indent=2))
+
+
+        if response['method'] == "notify_klippy_ready":
+            self.add_subscription(ws_app)
+            print("Klippy READY...")
+
+        if response['method'] == "notify_klippy_shutdown":
+            #print("Klippy SHUTDOWN...")
+            pass
+
+        if response['method'] == "notify_klippy_disconnected":
+            #print("Klippy DISCONNECTED...")
+            pass
 
 
 
@@ -231,13 +239,13 @@ class WebsocketInterface(JsonSerializable):
         self.ws_app.send(json.dumps(self.subscription_request))
 
     def write_json_config(self):
-        websocket_json_config = os.path.join(os.getcwd(), "config", "websocket.json")
+        websocket_json_config = os.path.join(os.getcwd(), "..", "config", "websocket.json")
 
         with open(websocket_json_config, "w") as json_file:
             json_file.write(json.dumps(self.to_json(), indent=3))
 
     def read_json_config(self):
-        websocket_json_config = os.path.join(os.getcwd(), "config", "websocket.json")
+        websocket_json_config = os.path.join(os.getcwd(), "..", "config", "websocket.json")
         with open(websocket_json_config) as json_file:
             json_data = json.load(json_file)
             return self.from_json(json_data)
