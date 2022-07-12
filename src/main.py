@@ -15,8 +15,19 @@
  # along with this program. If not, see <http://www.gnu.org/licenses/>.
  #
 
-from datetime import datetime, timedelta
 import json
+import sys
+import os
+import logging
+import logging.config
+
+logger_json_file = os.path.join(os.getcwd(), "..", "config", "logging.json")
+with open(logger_json_file) as json_file:
+    json_data = json.load(json_file)
+    logging.config.dictConfig(json_data)
+
+
+from datetime import datetime, timedelta
 from signal import signal, SIGINT
 from time import sleep
 from dgus.display.communication.request import Request
@@ -24,6 +35,7 @@ from dgus.display.communication.protocol import build_write_vp
 from dgus.display.communication.communication_interface import SerialCommunication
 from dgus.display.display import Display
 from dgus.display.mask import Mask
+
 
 from overview_display_mask import OverviewDisplayMask
 from axes_display_mask import AxesDisplayMask
@@ -53,27 +65,18 @@ def emergency_stop_pressed(response : bytes):
 
 if __name__ == "__main__":
     
+    
+    
     PRINTER_IP = "10.0.1.69"
     PORT = 7125
     websock = WebsocketInterface(PRINTER_IP, PORT)
 
     SERIAL_PORT = "/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0"
     serial_com = SerialCommunication(SERIAL_PORT)
-    serial_com.show_transmission_data = True
 
-
-    """
-    def send_bit_icon():
-        value = 15
-        val_bytes = value.to_bytes(length=2, byteorder='big')
-
-        return build_write_vp(0x2036, val_bytes)
-
-    serial_com.queue_request(Request(send_bit_icon, None, "Test"))
-
-    serial_com.start_com_thread()
-    """
-
+    if not serial_com.read_json_config():
+        print("Failure on loading Serial Configuration!")
+        sys.exit(1)
     
 
     serial_com.register_spontaneous_callback(0x0000, emergency_stop_pressed)
@@ -98,6 +101,8 @@ if __name__ == "__main__":
 
     if websock.read_json_config():
         websock.start()
+    else:
+        print("Failed to read websocket configuration... Aborting..")
 
       
     overviewMask = OverviewDisplayMask(serial_com, websock)
@@ -131,54 +136,7 @@ if __name__ == "__main__":
         display.switch_to_mask(30)
         display.switch_to_mask(0)
 
-        
-
-        """
-        display.active_mask.controls[7].font_width = 24
-        display.active_mask.controls[7].font_height = 44
-        display.active_mask.controls[7].hor_dis = 3
-        display.active_mask.controls[7].ver_dis = 1
-        #display.active_mask.controls[0].text_length = 8
-
-        display.active_mask.controls[7].send_config_data()
-        """
-
-
-        
-        #display.active_mask.controls[0].send_data()
-        
-
-        
-
 
         while(run_main_thread):
             display.update_current_mask()
             sleep(0.2)
-            
-            """
-            progress = websock.get_klipper_data(["virtual_sdcard", "progress"])
-            duration = websock.get_klipper_data(["print_stats", "print_duration"])
-
-            
-            
-            #if progress is None | duration is None:
-            #    continue
-
-            if progress >= 0.00001 and duration >= 0.0000001:
-
-                time_total = duration / progress
-                time_left = time_total - duration
-
-                time_total_delta = timedelta(seconds=int(time_total))
-                time_left_delta = timedelta(seconds=int(time_left))
-
-                #time_total_delta = timedelta(seconds=int(time_total_delta.total_seconds()))
-                #time_left_delta = timedelta(seconds=int(time_left_delta.total_seconds()))
-
-                print(f'TotalTime: {str(time_total_delta)}')
-                print(f'Time Left: {str(time_left_delta)}')
-
-            sleep(0.5)
-            """
-
-    

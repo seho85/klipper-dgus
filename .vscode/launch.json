@@ -9,7 +9,8 @@
             "type": "python",
             "request": "launch",
             //"program": "${file}",
-            "program": "./src/main.py",
+            "cwd": "${workspaceFolder}/src",
+            "program": "./main.py",
             "console": "integratedTerminal",
             "justMyCode": false
         }

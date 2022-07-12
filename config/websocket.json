@@ -58,9 +58,9 @@
             "square_corner_velocity": 5.0,
             "max_accel": 1500.0,
             "homed_axes": "",
-            "estimated_print_time": 36118.97399305556,
+            "estimated_print_time": 2753.9328771944442,
             "max_velocity": 150.0,
-            "print_time": 5077.039584305557,
+            "print_time": 2738.656902027778,
             "max_accel_to_decel": 1500.0,
             "axis_minimum": [
                -3.0,
@@ -84,16 +84,16 @@
             "extruder": "extruder"
          },
          "heater_bed": {
-            "temperature": 22.91,
+            "temperature": 22.92,
             "target": 0.0
          },
          "extruder": {
-            "temperature": 23.67,
+            "temperature": 34.18,
             "target": 0.0
          },
          "server_info": {
             "klippy_connected": true,
-            "klippy_state": "shutdown",
+            "klippy_state": "ready",
             "components": [
                "klippy_connection",
                "application",
@@ -126,7 +126,7 @@
                "docs"
             ],
             "warnings": [],
-            "websocket_count": 2,
+            "websocket_count": 3,
             "moonraker_version": "v0.7.1-547-gd3003a1-dirty",
             "missing_klippy_requirements": [],
             "api_version": [
@@ -137,7 +137,7 @@
             "api_version_string": "1.0.5"
          },
          "gcode_move": {
-            "speed_factor": 0.7000000000000001,
+            "speed_factor": 1.0,
             "extrude_factor": 1.0,
             "homing_origin": [
                0.0,
@@ -757,10 +757,10 @@
                   "d4_pin": "rp_pico:gpio5",
                   "encoder_pins": "rp_pico:gpio26,rp_pico:gpio27",
                   "lcd_type": "hd44780",
-                  "hd44780_pin_delay": 0.00055,
+                  "hd44780_pin_delay": 5e-05,
                   "d5_pin": "rp_pico:gpio4",
                   "e_pin": "rp_pico:gpio1",
-                  "hd44780_init_delay": 0.4,
+                  "hd44780_init_delay": 0.1,
                   "rs_pin": "rp_pico:gpio0",
                   "encoder_steps_per_detent": 4,
                   "hd44780_protocol_init": true,
@@ -827,7 +827,7 @@
             }
          },
          "fan": {
-            "speed": 0.38823529411764707
+            "speed": 0.0
          }
       }
    }

@@ -1,0 +1,56 @@
+{
+   "version": 1,
+   "disable_existing_loggers": true,
+   "root": {
+      "handlers": [
+         "console1"
+      ],
+      "level": "DEBUG"
+   },
+   "loggers": {
+      "": {
+         "level": "INFO"
+      },
+      "dgus.display.communication.communication_interface": {
+         "handlers": [
+            "console1"
+         ],
+         "propagate": false,
+         "level": "WARN"
+      },
+      "dgus.display.display": {
+         "handlers": [
+            "console1"
+         ],
+         "propagate": false,
+         "level": "WARN"
+      },
+      "jsonmerge": {
+         "handlers": [
+            "console1"
+         ],
+         "propagate": false,
+         "level": "WARN"
+      },
+      "websocket": {
+         "handlers": [
+            "console1"
+         ],
+         "propagate": false,
+         "level": "WARN"
+      }
+   },
+   "handlers": {
+      "console1": {
+         "formatter": "std_out1",
+         "class": "logging.StreamHandler",
+         "level": "DEBUG"
+      }
+   },
+   "formatters": {
+      "std_out1": {
+         "format": "%(asctime)s : %(levelname)-5s : %(name)s : %(funcName)s : %(message)s",
+         "datefmt": "%Y-%m-%d %I:%M:%S"
+      }
+   }
+}

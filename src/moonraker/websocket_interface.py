@@ -187,34 +187,35 @@ class WebsocketInterface(JsonSerializable):
                     self._current_request = None
             
         
-        # Subscribed printer objects are send with method: "notifiy_status_update"
-        # The subscribed objects are only published when the value has changed.
-        # e.g. bed_temperature target set to 50°, extruder temperature has changed, bed_temperature has changed, a.s.o.
-        if response['method'] == "notify_status_update":
-            #print(json.dumps(response, indent=3))
-            #TODO: Resource locking - possible data race!
-            json_pub_data = response["params"][0]
-            json_merged = merge(self.json_data_modell, json_pub_data)
-            with self.json_resouce_lock:
-                self.json_data_modell = json_merged
+        if 'method' in response:
+            # Subscribed printer objects are send with method: "notifiy_status_update"
+            # The subscribed objects are only published when the value has changed.
+            # e.g. bed_temperature target set to 50°, extruder temperature has changed, bed_temperature has changed, a.s.o.
+            if response['method'] == "notify_status_update":
+                #print(json.dumps(response, indent=3))
+                #TODO: Resource locking - possible data race!
+                json_pub_data = response["params"][0]
+                json_merged = merge(self.json_data_modell, json_pub_data)
+                with self.json_resouce_lock:
+                    self.json_data_modell = json_merged
 
 
-                   
-            #print(json.dumps(self.json_data_modell["toolhead"]["homed_axes"], indent=3))
-            #print(json.dumps(json_merged, indent=2))
+                    
+                #print(json.dumps(self.json_data_modell["toolhead"]["homed_axes"], indent=3))
+                #print(json.dumps(json_merged, indent=2))
 
 
-        if response['method'] == "notify_klippy_ready":
-            self.add_subscription(ws_app)
-            print("Klippy READY...")
+            if response['method'] == "notify_klippy_ready":
+                self.add_subscription(ws_app)
+                print("Klippy READY...")
 
-        if response['method'] == "notify_klippy_shutdown":
-            #print("Klippy SHUTDOWN...")
-            pass
+            if response['method'] == "notify_klippy_shutdown":
+                #print("Klippy SHUTDOWN...")
+                pass
 
-        if response['method'] == "notify_klippy_disconnected":
-            #print("Klippy DISCONNECTED...")
-            pass
+            if response['method'] == "notify_klippy_disconnected":
+                #print("Klippy DISCONNECTED...")
+                pass
 
 
 
