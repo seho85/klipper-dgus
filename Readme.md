@@ -20,8 +20,8 @@ Development
 -----------
 1) create python virtual environment<pre>python -m venv venv</pre>
 2) install dependecies<pre>pip install -r requirements.txt</pre>
-3) create python-dgus library (See [python-dgus](https://github.com/seho85/python-dgus))
-4) Install python-dgus<pre>pip install <path_to_python_dgus>/dist/libdgus-0.0.2-py3-none-any.whl</pre>
+   * For the first the python-dgus library is now added as prebuild library in *wheels* directory and added to *requirements.txt* and installed automatically
+      * The *python-dgus* library source can be found [here](https://github.com/seho85/python-dgus)
 
 
 License
