@@ -73,7 +73,13 @@ class WebsocketInterface(JsonSerializable):
     def __init__(self, printer_ip, port) -> None:
         self.printer_ip = printer_ip
         self.port = port
-        ws_url = f"ws://{printer_ip}:{str(port)}/websocket?token="
+
+        self.create_websocket()
+        
+
+    def create_websocket(self):
+
+        ws_url = f"ws://{self.printer_ip}:{str(self.port)}/websocket?token="
        
         def on_close(ws_app, close_status, close_msg):
             self.ws_on_close(ws_app, close_status, close_msg)
@@ -302,6 +308,8 @@ class WebsocketInterface(JsonSerializable):
 
         self.printer_ip = ip_object
         self.port = port_object
+
+        self.create_websocket()
 
         return True
 
