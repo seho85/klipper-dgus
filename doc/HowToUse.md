@@ -34,7 +34,9 @@ For normal usage this will be the machine running Klipper and Moonraker (Mainsai
 
 1)  Copy the *dgus-klipper* folder to your machine or directly clone it to the machine <pre>git clone https://github.com/seho85/klipper-dgus.git</pre>
 2)  SSH into the machine were you liked to run the display controll application.
-3)  Switch into the copied (cloned) *dgus-klipper* folder
+3) install python-venv package <pre>sudo apt-get install python3-venv</pre> 
+4)  Switch into the copied (cloned) *dgus-klipper* folder
+   
     1)  Create a python virtual environment <pre>python3 -m venv venv</pre>
     2)  Source the virtual enviroment <pre>source ./venv/bin/activate</pre>
     3)  Install all needed dependencies <pre>pip3 install -r requirements.txt</pre>
