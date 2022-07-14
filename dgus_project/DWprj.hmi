@@ -4,6 +4,8 @@ VARCount=64
 Version=-1
 SCREENDSIZE=480X800
 SPADDRESS=5000
+[CMD]
+CMD0=FFFF=Emergency Stop
 [IMG]
 00=00_Overview.bmp
 01=01_Axes.bmp
