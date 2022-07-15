@@ -27,7 +27,6 @@ with open(logger_json_file) as json_file:
     logging.config.dictConfig(json_data)
 
 
-from datetime import datetime, timedelta
 from signal import signal, SIGINT
 from time import sleep
 from dgus.display.communication.request import Request
@@ -49,6 +48,11 @@ from startup_mask import StartupMask
 from moonraker.websocket_interface import WebsocketInterface
 from moonraker.klippy_state import KlippyState
 
+import argparse
+
+
+logger = logging.getLogger(__name__)
+
 def emergency_stop_pressed(response : bytes):
     
     response_payload = response[7:]
@@ -66,9 +70,18 @@ def emergency_stop_pressed(response : bytes):
  
 
 if __name__ == "__main__":
+      
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config_dir', type=str, help="Path to config directory")
+    args = parser.parse_args()
+
+    config_dir = os.path.join(os.getcwd(), "..", "config")
+
+    if args.config_dir:
+        config_dir = args.config_dir
     
-    
-    
+    logger.info("Using config directory: %s", config_dir)
+
     PRINTER_IP = "10.0.1.69"
     PORT = 7125
     websock = WebsocketInterface(PRINTER_IP, PORT)
@@ -77,16 +90,18 @@ if __name__ == "__main__":
     serial_com = SerialCommunication(SERIAL_PORT)
 
     
-    serial_configuration_read = serial_com.read_json_config()
+    serial_config_file = os.path.join(config_dir, "serial_config.json")
+    serial_configuration_read = serial_com.read_json_config(serial_config_file)
 
-    websocket_configuration_read = websock.read_json_config()
+    websocket_config_file = os.path.join(config_dir, "websocket.json")
+    websocket_configuration_read = websock.read_json_config(websocket_config_file)
 
     if not serial_configuration_read or not websocket_configuration_read:
         if not serial_configuration_read:
-            print("Failure on loading Serial Configuration!")
+            logger.critical("Failed to read serial configuration! file: %s", serial_config_file)
 
         if not websocket_configuration_read:
-            print("Failure reading websocket.json")
+            logger.critical("Failed to read websocket configuration! file: %s", websocket_config_file)
 
         sys.exit(1)
     
@@ -102,7 +117,7 @@ if __name__ == "__main__":
             display._active_mask.mask_suppressed()
 
         websock.stop()
-        websock.write_json_config()
+        websock.write_json_config(os.path.join(config_dir, "websocket.json"))
         serial_com.stop()
         global run_main_thread
         run_main_thread = False
