@@ -15,13 +15,24 @@
  # along with this program. If not, see <http://www.gnu.org/licenses/>.
  #
 
+import argparse
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-c', '--config_dir', type=str, help="Path to config directory")
+args = parser.parse_args()
+
+config_dir = os.path.join(os.getcwd(), "..", "config")
+
+if args.config_dir:
+    config_dir = args.config_dir
+
 import json
 import sys
-import os
 import logging
 import logging.config
 
-logger_json_file = os.path.join(os.getcwd(), "..", "config", "logging.json")
+logger_json_file = os.path.join(config_dir, "logging.json")
 with open(logger_json_file) as json_file:
     json_data = json.load(json_file)
     logging.config.dictConfig(json_data)
@@ -48,8 +59,6 @@ from startup_mask import StartupMask
 from moonraker.websocket_interface import WebsocketInterface
 from moonraker.klippy_state import KlippyState
 
-import argparse
-
 
 logger = logging.getLogger(__name__)
 
@@ -71,14 +80,7 @@ def emergency_stop_pressed(response : bytes):
 
 if __name__ == "__main__":
       
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config_dir', type=str, help="Path to config directory")
-    args = parser.parse_args()
-
-    config_dir = os.path.join(os.getcwd(), "..", "config")
-
-    if args.config_dir:
-        config_dir = args.config_dir
+    
     
     logger.info("Using config directory: %s", config_dir)
 
