@@ -19,6 +19,7 @@ import os
 import json
 from threading import Thread, Lock
 from time import sleep
+from typing import Any, Callable
 from websocket import WebSocketApp
 from jsonmerge import merge
 from queue import Queue
@@ -27,6 +28,9 @@ from dgus.display.serialization.json_serializable import JsonSerializable
 from moonraker.request_id import WebsocktRequestId
 from moonraker.moonraker_request import MoonrakerRequest
 
+import logging
+
+from moonraker.klippy_state import KlippyState
 
 class WebsocketInterface(JsonSerializable):
     ws_app : WebSocketApp
@@ -43,6 +47,13 @@ class WebsocketInterface(JsonSerializable):
 
     _requests : Queue = Queue()
     _current_request : MoonrakerRequest = None
+
+    _logger = logging.getLogger(__name__)
+
+    _klippy_state : KlippyState = KlippyState.UNKOWN
+    _klippy_state_text : str = ""
+
+    _klippy_event_changed_callbacks = []
 
     query_req = {
         "jsonrpc": "2.0",
@@ -80,6 +91,8 @@ class WebsocketInterface(JsonSerializable):
     def create_websocket(self):
 
         ws_url = f"ws://{self.printer_ip}:{str(self.port)}/websocket?token="
+
+        self._logger.info("Using websocket URL: %s", ws_url)
        
         def on_close(ws_app, close_status, close_msg):
             self.ws_on_close(ws_app, close_status, close_msg)
@@ -126,6 +139,15 @@ class WebsocketInterface(JsonSerializable):
             
                 self.ws_app.send(json.dumps(query_server_info_json))
 
+
+                query_server_info_json = {
+                    "jsonrpc": "2.0",
+                    "method": "printer.info",
+                    "id": WebsocktRequestId.QUERY_PRINTER_INFO
+                }
+
+                self.ws_app.send(json.dumps(query_server_info_json))
+
                 if not self._requests.empty():
                     if self._current_request is None:
                         self._current_request = self._requests.get()
@@ -138,15 +160,16 @@ class WebsocketInterface(JsonSerializable):
     def stop(self):
         self.cyclic_query_thread_running = False
         self.cyclic_query_thread.join()
-        print("Stopped cyclic query thread...")
+        self._logger.info("Stopped cyclic query thread...")
         
         self.ws_app.close()
         self.thread.join()
-        print("Stopped Websocket Communication....")
+        self._logger.info("Stopped Websocket Communication....")
+        
 
     def ws_on_open(self, ws_app):
         self.open = True
-        print("Websocket open...")
+        self._logger.info("Connection to Moonraker websocket established...")
         self.send_query(ws_app)
 
     def ws_on_close(self,ws_app, close_status, close_msg):
@@ -154,7 +177,7 @@ class WebsocketInterface(JsonSerializable):
         #TODO: Error handling disconnected a.s.o.
 
     def ws_on_error(self, ws_app, error):
-        pass
+        self._logger.critical("Websockt Error %s: %s", ws_app, error)
 
     def ws_on_message(self, ws_app, msg):
         response = json.loads(msg)
@@ -178,13 +201,24 @@ class WebsocketInterface(JsonSerializable):
 
                 #self.server_info = response["resut"]
                 with self.json_resouce_lock:
-                    json_merged = merge(self.json_data_modell["server_info"],response["result"] )
+                    json_merged = merge(self.json_data_modell["server_info"], response["result"] )
                     self.json_data_modell["server_info"] = json_merged
 
                     #print(json.dumps(response, indent=3))
 
             #if response["id"] == 8000:
             #    print(json.dumps(response, indent=3))
+
+            if response["id"] == WebsocktRequestId.QUERY_PRINTER_INFO:
+                #print(json.dumps(response, indent=3))
+
+                if 'result' in response:
+                    state_string = response["result"]["state"]
+                    state_message = response["result"]["state_message"]
+                    klippy_state = KlippyState.get_state_for_string(state_string)
+
+                    if klippy_state != self._klippy_state or state_message != self._klippy_state_text:
+                        self._set_klippy_state(klippy_state, state_message)
 
 
             if self._current_request is not None:
@@ -213,15 +247,17 @@ class WebsocketInterface(JsonSerializable):
 
             if response['method'] == "notify_klippy_ready":
                 self.add_subscription(ws_app)
-                print("Klippy READY...")
+                self._logger.info("Received: notifiy_klippy_ready")
+                self._set_klippy_state(KlippyState.READY)
 
             if response['method'] == "notify_klippy_shutdown":
-                #print("Klippy SHUTDOWN...")
-                pass
+                self._logger.info("Received: notifiy_klippy_shutdown")
+                self._set_klippy_state(KlippyState.SHUTDOWN)
+                
 
             if response['method'] == "notify_klippy_disconnected":
-                #print("Klippy DISCONNECTED...")
-                pass
+                self._logger.info("Received: notifiy_klippy_disconnected")
+                self._set_klippy_state(KlippyState.DISCONNECTED)
 
 
 
@@ -236,7 +272,7 @@ class WebsocketInterface(JsonSerializable):
             "params": {
                 "objects": { },
             },
-            "id": 4654
+            "id": WebsocktRequestId.UNSUBSCRIBE_PRINTER_OBJECTS
         }
 
         self.ws_app.send(json.dumps(data))
@@ -253,9 +289,18 @@ class WebsocketInterface(JsonSerializable):
 
     def read_json_config(self):
         websocket_json_config = os.path.join(os.getcwd(), "..", "config", "websocket.json")
-        with open(websocket_json_config) as json_file:
-            json_data = json.load(json_file)
-            return self.from_json(json_data)
+
+        try:
+            
+            with open(websocket_json_config) as json_file:
+                json_data = json.load(json_file)
+                return self.from_json(json_data)
+
+        except FileNotFoundError:
+            self._logger.critical("Unable to read configuration from %s",websocket_json_config)
+            return False
+            
+
 
     def get_klipper_data(self, klipper_data : list, array_index : int = -1):
         with self.json_resouce_lock:
@@ -324,3 +369,17 @@ class WebsocketInterface(JsonSerializable):
         }
 
         return websocket_json
+
+    def _set_klippy_state(self, state : KlippyState, state_message = ""):
+        self._klippy_state = state
+        self._klippy_state_text = state_message
+        self._logger.info("KlippyState Changed: %s", self._klippy_state)
+        self._logger.info("State Message: %s", state_message)
+
+        for cb in self._klippy_event_changed_callbacks:
+            cb(state, state_message)
+      
+
+
+    def register_klippy_state_event_receiver(self, callback : Callable[[KlippyState, str], Any]):
+        self._klippy_event_changed_callbacks.append(callback)

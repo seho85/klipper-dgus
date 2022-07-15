@@ -34,3 +34,6 @@ class KeyCodes(IntEnum):
 
     LED_ON = 0x0021
     LED_OFF = 0x0022
+
+    FW_RESTART = 0x0023
+    RESTART = 0x0024

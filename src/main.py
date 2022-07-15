@@ -44,8 +44,10 @@ from tuning_mask import TuningMask
 from extruder_mask import ExtruderMask
 from extruder_temp_to_low_mask import ExtruderTemperatureToLowMask
 from fan_display_mask import FanMask
+from startup_mask import StartupMask
 
 from moonraker.websocket_interface import WebsocketInterface
+from moonraker.klippy_state import KlippyState
 
 def emergency_stop_pressed(response : bytes):
     
@@ -74,11 +76,20 @@ if __name__ == "__main__":
     SERIAL_PORT = "/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0"
     serial_com = SerialCommunication(SERIAL_PORT)
 
-    if not serial_com.read_json_config():
-        print("Failure on loading Serial Configuration!")
+    
+    serial_configuration_read = serial_com.read_json_config()
+
+    websocket_configuration_read = websock.read_json_config()
+
+    if not serial_configuration_read or not websocket_configuration_read:
+        if not serial_configuration_read:
+            print("Failure on loading Serial Configuration!")
+
+        if not websocket_configuration_read:
+            print("Failure reading websocket.json")
+
         sys.exit(1)
     
-
     serial_com.register_spontaneous_callback(0x0000, emergency_stop_pressed)
 
     run_main_thread = True
@@ -98,12 +109,10 @@ if __name__ == "__main__":
 
     signal(SIGINT, handleSIGINT)
 
+    websock.start()
 
-    if websock.read_json_config():
-        websock.start()
-    else:
-        print("Failed to read websocket configuration... Aborting..")
-
+    startupMask = StartupMask(serial_com, websock)
+    display.add_mask(startupMask)
       
     overviewMask = OverviewDisplayMask(serial_com, websock)
     display.add_mask(overviewMask)
@@ -133,10 +142,23 @@ if __name__ == "__main__":
     if serial_com.start_com_thread():
         display.read_config_data_for_all_controls()
         #display.write_config_data_for_all_controls()
-        display.switch_to_mask(30)
-        display.switch_to_mask(0)
+
+        display.switch_to_mask(50)
+
+        #display.switch_to_mask(30)
+        #display.switch_to_mask(0)
 
 
-        while(run_main_thread):
-            display.update_current_mask()
-            sleep(0.2)
+    def klippy_state_changed(state : KlippyState, state_message : str):
+        if state == KlippyState.READY:
+            display.switch_to_mask(30)
+            display.switch_to_mask(0)
+
+        else:# state == KlippyState.ERROR or state == KlippyState.SHUTDOWN:
+            display.switch_to_mask(50, False)
+
+    websock.register_klippy_state_event_receiver(klippy_state_changed)
+
+    while(run_main_thread):
+        display.update_current_mask()
+        sleep(0.2)

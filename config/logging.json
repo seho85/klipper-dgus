@@ -38,6 +38,13 @@
          ],
          "propagate": false,
          "level": "WARN"
+      },
+      "moonraker.websocket_interface" : {
+         "handlers": [
+            "console1"
+         ],
+         "propagate": false,
+         "level": "INFO"
       }
    },
    "handlers": {
