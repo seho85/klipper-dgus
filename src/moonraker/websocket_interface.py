@@ -281,17 +281,14 @@ class WebsocketInterface(JsonSerializable):
     def add_subscription(self, ws):
         self.ws_app.send(json.dumps(self.subscription_request))
 
-    def write_json_config(self):
-        websocket_json_config = os.path.join(os.getcwd(), "..", "config", "websocket.json")
+    def write_json_config(self, websocket_json_config):
 
         with open(websocket_json_config, "w") as json_file:
             json_file.write(json.dumps(self.to_json(), indent=3))
 
-    def read_json_config(self):
-        websocket_json_config = os.path.join(os.getcwd(), "..", "config", "websocket.json")
+    def read_json_config(self, websocket_json_config):
 
         try:
-            
             with open(websocket_json_config) as json_file:
                 json_data = json.load(json_file)
                 return self.from_json(json_data)
