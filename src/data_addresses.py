@@ -94,3 +94,8 @@ class DataAddress(IntEnum):
     SPONT_LED_CONTROL_BUTTON = 0x0024
 
 
+    #STARTUP MASK
+    KLIPPY_STATE_TEXT = 0x5040
+    START_MASK_BUTTON = 0x0025
+
+
