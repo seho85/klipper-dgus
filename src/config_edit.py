@@ -8,6 +8,17 @@ import argparse
 import os
 import json
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-c', '--config_dir', type=str, help="Path to config directory")
+args = parser.parse_args()
+
+config_dir = os.path.join(os.getcwd(), "..", "config")
+
+if args.config_dir:
+    config_dir = args.config_dir
+
+
+
 
 def determine_serial_interface():
     print("Please disconnect USB-TTL used for DGUS Display...")
@@ -95,14 +106,6 @@ def update_websocket_config(ip):
     print("Updated websocket configuration...")
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-c', '--config_dir', type=str, help="Path to config directory")
-args = parser.parse_args()
-
-config_dir = os.path.join(os.getcwd(), "..", "config")
-
-if args.config_dir:
-    config_dir = args.config_dir
 
 
 
@@ -116,3 +119,4 @@ printer_ip = setup_printer_ip()
 
 
 update_serial_config(serial_device)
+update_websocket_config(printer_ip)
