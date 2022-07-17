@@ -371,7 +371,7 @@ class WebsocketInterface(JsonSerializable):
         self._klippy_state = state
         self._klippy_state_text = state_message
         self._logger.info("KlippyState Changed: %s", self._klippy_state)
-        self._logger.info("State Message: %s", state_message)
+        self._logger.info("State Message: %s", state_message.replace("\n", " "))
 
         for cb in self._klippy_event_changed_callbacks:
             cb(state, state_message)
