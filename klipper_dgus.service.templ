@@ -1,0 +1,16 @@
+
+[Unit]
+Description=DGUS Display for Klipper
+Requires=moonraker.service
+
+[Service]
+User=pi
+Group=pi
+Type=idle
+WorkingDirectory=<dgus_dir>
+ExecStartPre=/usr/bin/sleep 15
+ExecStart=<dgus_dir>/venv/bin/python3 <dgus_dir>/src/main.py -c <config_dir>
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
