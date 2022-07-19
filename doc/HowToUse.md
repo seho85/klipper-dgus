@@ -42,6 +42,7 @@ For normal usage this will be the machine running Klipper and Moonraker (Mainsai
     3)  Install all needed dependencies <pre>pip3 install -r requirements.txt</pre>
     4)  Tweak  [*serial_config.json*](config_files/serial_config_json.md)
     5)  Tweak [*websocket.json*](config_files/websocket_json.md)
+    6)  Tweak [*dgus_display_macros.cfg*](config_files/dgus_display_macros_cfg.md)
 
 
 Start the display control application
