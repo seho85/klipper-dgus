@@ -1,3 +1,5 @@
+.. _serial_config_json:
+
 ******************
 serial_config.json
 ******************

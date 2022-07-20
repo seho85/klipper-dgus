@@ -1,3 +1,5 @@
+.. _websocket_json:
+
 **************
 websocket.json
 **************

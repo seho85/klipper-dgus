@@ -1,3 +1,5 @@
+.. _dgus_display_macros_cfg:
+
 ***********************
 dgus_display_macros.cfg
 ***********************
