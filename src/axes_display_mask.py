@@ -15,6 +15,7 @@
  # along with this program. If not, see <http://www.gnu.org/licenses/>.
  #
 
+import logging
 from json import dumps
 from dgus.display.communication.request import Request
 from dgus.display.mask import Mask
@@ -29,11 +30,14 @@ from data_addresses import DataAddress
 from moonraker.request_id import WebsocktRequestId
 
 
+
 class AxesDisplayMask(Mask):
     
     web_socket : WebsocketInterface = None
     display : Display = None
     distance : int = 10
+
+    logger = logging.getLogger(__name__)
 
 
     def __init__(self, com_interface: SerialCommunication, web_sock : WebsocketInterface, display : Display) -> None:
@@ -86,8 +90,7 @@ class AxesDisplayMask(Mask):
         req = Request(send_biticon_state, None, "SendBit IconState")
         self._com_interface.queue_request(req)
 
-        print(f'Move Distance changed to {self.distance}')
-
+        self.logger.info('Move Distance changed to %s', self.distance)
 
     def key_pressed(self, data):
         response_payload = data[7:]
@@ -100,6 +103,19 @@ class AxesDisplayMask(Mask):
 
         if self.is_keycode_a_home_key(keycode):
             self.perform_homing()
+
+        if keycode == KeyCodes.Z_TILT:
+            self.logger.debug("Z-Tilt pressed...")
+            self.perform_z_tilt()
+
+
+        if keycode == KeyCodes.USER_POS1:
+            self.logger.debug("User POS1 pressed...")
+            self.perform_user_pos(1)
+
+        if keycode == KeyCodes.USER_POS2:
+            self.logger.debug("User POS2 pressed...")
+            self.perform_user_pos(2)
 
 
     def is_keycode_a_move_key(self, key_code):
@@ -184,10 +200,37 @@ class AxesDisplayMask(Mask):
         self.web_socket.queue_request(req)
 
     def homing_request_send(self):
-        print("Homing request was send....")
+        self.logger.info("Homing request was send....")
         self.display.switch_to_mask(51, False)
 
 
     def home_request_finished(self, json_data):
-        print("Homing request finished....")
+        self.logger.info("Homing request finished....")
         self.display.switch_to_mask(self.mask_no, False)
+
+    def perform_z_tilt(self):
+        ztilt_cmd = {
+            "jsonrpc": "2.0",
+            "method": "printer.gcode.script",
+            "params": {
+                "script": 'DGUS_ZTILT',
+                                
+            },
+            "id": WebsocktRequestId.PERFORM_Z_TILT
+        }
+        self.logger.debug("'Perform Z-Tilt' Websocket Request: %s", dumps(ztilt_cmd, indent=3))
+        self.web_socket.ws_app.send(dumps(ztilt_cmd))
+
+
+    def perform_user_pos(self, pos : int):
+        user_pos_cmd = {
+            "jsonrpc": "2.0",
+            "method": "printer.gcode.script",
+            "params": {
+                "script": f'DGUS_USER_POS{pos}',
+                                
+            },
+            "id": WebsocktRequestId.SET_USER_POS
+        }
+        self.logger.debug("User Pos Websocket Request: %s", dumps(user_pos_cmd, indent=3))
+        self.web_socket.ws_app.send(dumps(user_pos_cmd))

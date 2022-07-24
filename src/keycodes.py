@@ -37,3 +37,7 @@ class KeyCodes(IntEnum):
 
     FW_RESTART = 0x0023
     RESTART = 0x0024
+
+    Z_TILT = 0x0025
+    USER_POS1 = 0x0026
+    USER_POS2 = 0x0027

@@ -45,6 +45,13 @@
          ],
          "propagate": false,
          "level": "INFO"
+      },
+      "axes_display_mask" : {
+         "handlers": [
+            "console1"
+         ],
+         "propagate": false,
+         "level": "INFO"
       }
    },
    "handlers": {
