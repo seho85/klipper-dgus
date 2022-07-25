@@ -15,6 +15,7 @@
  # along with this program. If not, see <http://www.gnu.org/licenses/>.
  #
  
+from distutils.log import error
 import os
 import json
 from threading import Thread, Lock
@@ -31,6 +32,7 @@ from moonraker.moonraker_request import MoonrakerRequest
 import logging
 
 from moonraker.klippy_state import KlippyState
+from moonraker.printer_state import PrinterState
 
 class WebsocketInterface(JsonSerializable):
     ws_app : WebSocketApp
@@ -52,8 +54,11 @@ class WebsocketInterface(JsonSerializable):
 
     _klippy_state : KlippyState = KlippyState.UNKOWN
     _klippy_state_text : str = ""
-
     _klippy_event_changed_callbacks = []
+
+    _printer_state : PrinterState = PrinterState.UNKNOWN
+    _printer_error_text : str = ""
+    _printer_state_event_changed_callbacks = []
 
     query_req = {
         "jsonrpc": "2.0",
@@ -237,6 +242,10 @@ class WebsocketInterface(JsonSerializable):
                 json_pub_data = response["params"][0]
                 json_merged = merge(self.json_data_modell, json_pub_data)
                 with self.json_resouce_lock:
+                    printer_state_string = str(json_merged["print_stats"]["state"])
+                    read_printer_state = PrinterState.get_state_for_string(printer_state_string)
+                    if self._printer_state != read_printer_state:
+                        self._set_printer_state(read_printer_state)
                     self.json_data_modell = json_merged
 
 
@@ -380,3 +389,21 @@ class WebsocketInterface(JsonSerializable):
 
     def register_klippy_state_event_receiver(self, callback : Callable[[KlippyState, str], Any]):
         self._klippy_event_changed_callbacks.append(callback)
+
+
+
+    def _set_printer_state(self, state : PrinterState, error_msg = ""):
+        
+        self._printer_state = state
+        self._printer_error_text = error_msg
+
+        self._logger.info("PrinterState Changed: %s", self._printer_state)
+        if self._printer_state == PrinterState.ERROR:
+            self._logger.info("Error Message: %s", error_msg.replace("\n", " "))
+
+        for callback in self._printer_state_event_changed_callbacks:
+            callback(state, error_msg)
+
+
+    def register_printer_state_event_receiver(self, callback : Callable[[PrinterState, str], Any]):
+        self._printer_state_event_changed_callbacks.append(callback)

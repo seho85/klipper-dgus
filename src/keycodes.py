@@ -41,3 +41,7 @@ class KeyCodes(IntEnum):
     Z_TILT = 0x0025
     USER_POS1 = 0x0026
     USER_POS2 = 0x0027
+
+    RESUME_PRINT = 0x0028
+    PAUSE_PRINT = 0x0029
+    CANCEL_PRINT = 0x0030
