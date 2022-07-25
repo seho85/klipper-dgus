@@ -31,6 +31,7 @@ Display Masks
     - Control Bed, Extruder Temperatur
     - Show Printtime and progress
     - Show actual postion of printhead
+    - Pause / Resume / Cancel Print
     end note
 
     MainMenu --> Homing
@@ -38,6 +39,8 @@ Display Masks
     Features:
     - Homing
     - Drive Axes
+    - Perform Z-Tilt
+    - 2 user def. postions
     end note
 
     MainMenu --> Extruder

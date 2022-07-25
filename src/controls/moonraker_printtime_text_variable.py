@@ -66,8 +66,8 @@ class MoonrakerPrintTimeTextVariable(TextVariable):
                 #time_total_delta = timedelta(seconds=int(time_total_delta.total_seconds()))
                 #time_left_delta = timedelta(seconds=int(time_left_delta.total_seconds()))
 
-                print(f'TotalTime: {str(time_total_delta)}')
-                print(f'Time Left: {str(time_left_delta)}')
+                #print(f'TotalTime: {str(time_total_delta)}')
+                #print(f'Time Left: {str(time_left_delta)}')
 
                 if self.time_type == PrintTimeDisplay.TOTAL_TIME:
                     text = str(time_total_delta)

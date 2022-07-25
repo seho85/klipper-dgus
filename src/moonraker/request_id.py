@@ -36,4 +36,7 @@ class WebsocktRequestId(IntEnum):
     FIRMWARE_RESTART = 13,
     RESTART = 14,
     PERFORM_Z_TILT = 15,
-    SET_USER_POS = 16
+    SET_USER_POS = 16,
+    PRINT_PAUSE = 17,
+    PRINT_RESUME = 18,
+    PRINT_CANCEL = 19

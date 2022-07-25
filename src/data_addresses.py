@@ -35,6 +35,7 @@ class DataAddress(IntEnum):
     SPONT_SPEED_FACTOR_SETPOINT = 0x0015
     SPONT_EXTRUSION_FACTOR_SETPOINT = 0x0016
     
+    SPONT_OVERVIEW_MASK_BUTTON = 0x0017
 
     ########################################
 
@@ -96,6 +97,7 @@ class DataAddress(IntEnum):
 
     #STARTUP MASK
     KLIPPY_STATE_TEXT = 0x5040
+    #TODO Name SPONT_
     START_MASK_BUTTON = 0x0025
 
 

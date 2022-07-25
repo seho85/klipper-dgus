@@ -31,6 +31,9 @@ from controls.klipper_value_format import KlipperValueType
 
 from data_addresses import DataAddress
 from moonraker.request_id import WebsocktRequestId
+from keycodes import KeyCodes
+from moonraker.moonraker_request import MoonrakerRequest
+from moonraker.printer_state import PrinterState
 
 class OverviewDisplayMask(Mask):
     websock : WebsocketInterface = None
@@ -49,11 +52,15 @@ class OverviewDisplayMask(Mask):
     ypos : MoonrakerDataVariable
 
     data = 0
+
+    state_change_pending : bool = False
+    printer_state_value : PrinterState = PrinterState.UNKNOWN
     
     def __init__(self, com_interface: SerialCommunication, websock : WebsocketInterface) -> None:
         super().__init__(0, com_interface)
 
         self.websock = websock
+        websock.register_printer_state_event_receiver(self.printer_state_changed)
         
         #0
         self.temp_extruder = MoonrakerDataVariable(self._com_interface, DataAddress.TEMPERATURE_EXTRUDER, 2, DataAddress.UNDEFINED, self.websock)
@@ -120,6 +127,9 @@ class OverviewDisplayMask(Mask):
 
         self._com_interface.register_spontaneous_callback(DataAddress.SPONT_EXTRUDER_TEMP_SETPOINT , self.extruder_target_temp_data_changed)
         self._com_interface.register_spontaneous_callback(DataAddress.SPONT_BED_TEMP_SETPOINT, self.bed_target_temp_data_changed)
+        self._com_interface.register_spontaneous_callback(DataAddress.SPONT_OVERVIEW_MASK_BUTTON, self.button_pressed)
+
+
 
     def extruder_target_temp_data_changed(self, response : bytes):
         address = int.from_bytes(response[4:6], byteorder='big', signed=False)
@@ -154,3 +164,84 @@ class OverviewDisplayMask(Mask):
                 }
    
                 self.websock.ws_app.send(json.dumps(set_extruder_temp))
+
+
+    def button_pressed(self, response:bytes):
+        response_payload = response[7:]
+        keycode = int.from_bytes(response_payload, byteorder='big')
+
+        if keycode == KeyCodes.PAUSE_PRINT:
+            self.send_pause()
+
+        if keycode == KeyCodes.RESUME_PRINT:
+            self.send_resume()
+
+        if keycode == KeyCodes.CANCEL_PRINT:
+            self.send_cancel()
+
+    def send_pause(self):
+
+        if self.printer_state_value == PrinterState.UNKNOWN:
+            return
+
+        if self.state_change_pending:
+            return
+        
+        if self.printer_state_value == PrinterState.PRINTING:
+
+            self.state_change_pending = True
+
+            send_pause_rpc_command = {
+                "jsonrpc": "2.0",
+                "method": "printer.print.pause",
+                "id": WebsocktRequestId.PRINT_PAUSE
+            }
+
+            self.websock.ws_app.send(json.dumps(send_pause_rpc_command))
+
+
+
+    def send_resume(self):
+
+        if self.printer_state_value == PrinterState.UNKNOWN:
+            return
+        if self.state_change_pending:
+            return
+        
+        if self.printer_state_value == PrinterState.PAUSED:
+
+            self.state_change_pending = True
+
+            send_resume_rpc_command = {
+                "jsonrpc": "2.0",
+                "method": "printer.print.resume",
+                "id": WebsocktRequestId.PRINT_RESUME
+            }
+
+            self.websock.ws_app.send(json.dumps(send_resume_rpc_command))
+  
+      
+
+    def send_cancel(self):
+
+        if self.printer_state_value == PrinterState.UNKNOWN:
+            return
+        if self.state_change_pending:
+            return
+        
+        if self.printer_state_value == PrinterState.PAUSED or self.printer_state_value == PrinterState.PRINTING:
+
+            self.state_change_pending = True
+
+            send_cancel_rpc_command = {
+                "jsonrpc": "2.0",
+                "method": "printer.print.cancel",
+                "id": WebsocktRequestId.PRINT_CANCEL
+            }
+
+            self.websock.ws_app.send(json.dumps(send_cancel_rpc_command))
+
+
+    def printer_state_changed(self, state : PrinterState, error_msg: str):
+        self.printer_state_value = state
+        self.state_change_pending = False
