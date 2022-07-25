@@ -1,0 +1,2 @@
+Sphinx==5.0.2
+sphinxcontrib-plantuml==0.24
