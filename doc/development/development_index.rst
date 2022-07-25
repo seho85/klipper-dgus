@@ -9,5 +9,6 @@ To get an overview how everything works together please refer :ref:`Getting star
    :caption: Contents:
 
    getting_started
-   control_application
-   dgus_project
+   contribute
+   control_application/control_application_index
+   dgus_project/dgus_project_index
