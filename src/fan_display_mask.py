@@ -75,13 +75,13 @@ class FanMask(Mask):
             "jsonrpc": "2.0",
             "method": "printer.gcode.script",
             "params": {
-                "script": "LED_OFF"
+                "script": "DGUS_LED_OFF"
             },
             "id": WebsocktRequestId.LED_CMD
         }
 
         if led_on:
-            set_led_state_rpc_request["params"]["script"] = "LED_ON"
+            set_led_state_rpc_request["params"]["script"] = "DGUS_LED_ON"
 
         self.websock.ws_app.send(json.dumps(set_led_state_rpc_request))
 

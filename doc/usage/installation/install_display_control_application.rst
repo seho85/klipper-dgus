@@ -34,7 +34,8 @@ And run the install script:
 
     $ ./install_for_mainsailos.sh
 
-And after installation tweak :ref:`dgus_display_macros.cfg <dgus_display_macros_cfg>`
+And after installation tweak :ref:`dgus_display_macros.cfg <dgus_display_macros_cfg>` and include
+it to your *printer.cfg*
 
 .. note::
     You will prompted for entering your sudo password.
