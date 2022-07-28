@@ -15,11 +15,24 @@ The script is consists of two major parts:
 
 On the configuration you will be asked to perform some actions.
 
-Just run the install script:
+Get the project sources to your machine either by copying them per scp or just run
 
 .. code-block:: shell
 
-    $ ./install_mainsailos.sh
+    git clone https://github.com/seho85/klipper-dgus.git
+
+
+change into the directory
+
+.. code-block:: shell
+
+    cd klipper-dgus
+
+And run the install script:
+
+.. code-block:: shell
+
+    $ ./install_for_mainsailos.sh
 
 And after installation tweak :ref:`dgus_display_macros.cfg <dgus_display_macros_cfg>`
 

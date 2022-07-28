@@ -6,6 +6,14 @@ The display i'm using here is a *DMG80480C043_02WTRZ07* (Stock Display of Anycub
 
 For Displays with other resolution, the Project must be recreated.
 
+**WARNING: 
+This project is still under development and needs to be tested properly by a larger user base.
+It has been tested by a few people, so most should be stable, but may happen for you that some 
+errors or problems occur.
+
+Please keep that in mind when you this project.
+**
+
 
 Documentation
 -------------
