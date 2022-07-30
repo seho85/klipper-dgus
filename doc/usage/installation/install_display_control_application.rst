@@ -34,11 +34,13 @@ And run the install script:
 
     $ ./install_for_mainsailos.sh
 
-And after installation tweak :ref:`dgus_display_macros.cfg <dgus_display_macros_cfg>` and include
-it to your *printer.cfg*
+
+.. hint::
+    And after installation tweak :ref:`dgus_display_macros.cfg <dgus_display_macros_cfg>` and include
+    it to your *printer.cfg*
 
 .. note::
-    You will prompted for entering your sudo password.
+    During the installation will prompted for entering your sudo password.
 
 
 .. _easy_install_script_installation:

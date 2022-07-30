@@ -6,7 +6,7 @@
 .. include:: general.rst
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    usage/usage_index
