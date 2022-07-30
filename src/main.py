@@ -168,7 +168,7 @@ if __name__ == "__main__":
 
     def klippy_state_changed(state : KlippyState, state_message : str):
         if state == KlippyState.READY:
-            display.switch_to_mask(30)
+            display.switch_to_mask(30, False)
             display.switch_to_mask(0)
 
         else:# state == KlippyState.ERROR or state == KlippyState.SHUTDOWN:
