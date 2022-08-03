@@ -4,53 +4,36 @@ echo "#####################################"
 echo "DGUS for Klipper (MainsailOS Install)"
 echo "#####################################"
 
-
-#Check that script is running as root
-#if [ "$EUID" -ne 0 ]
-#  then echo "This script needs to be runned as root."
-#  exit
-#fi
-
 #Check that script is exectuted in klipper-dgus folder
 if [ "${0%/*}" != "." ]
     then echo "The script needs to be runned from 'klipper-dgus' folder"
     exit
 fi
 
-#Check if python3-venv package is installed
-
-echo "Checking if python3-venv is installed..."
-python_venv_package_check=$(dpkg -S python3-venv)
-
-if [[ "$python_venv_package_check" == *"no path found matching pattern" ]]; then
-    echo "python3-venv package is not installed - installing it"
-    sudo apt-get install python3-venv
-
-else
-    echo "python3-venv is already installed"
-fi
+#Install python3-venv
+echo -e "\nInstalling python3-venv package"
+sudo apt-get install python3-venv -y
 
 echo -e "\nCreating Python Virtual Environment"
 
 if [ -d ./venv ]; then
-    echo "Virtual Environment already existing"
-    echo "Skipping creation"
-
-else
-    python3 -m venv venv
-    echo "Created Python Virtual Environment"
+    echo "Found existing Python Virtual Environment"
+    echo "Removing it..."
+    rm -rf ./venv
 fi
+
+python3 -m venv venv
+echo "Created Python Virtual Environment"
 
 
 echo -e "\nActivating Python Virtual Environment"
 source ./venv/bin/activate
 
-
 echo -e "\nInstalling python dependencies"
 pip3 install -r requirements.txt
 
 echo -e "\nCopying config to klipper_config"
-conf_dir=/home/$(whoami)/dgus_display
+conf_dir=/home/$(whoami)/klipper_config/dgus_display
 cp -r config $conf_dir
 
 echo -e "\nCreating systemd service (autostart)"
