@@ -102,6 +102,7 @@ class OverviewDisplayMask(Mask):
         
         #8
         self.print_completed_percent = MoonrakerDataVariable(self._com_interface, DataAddress.PRINT_PERCENT, 2, DataAddress.UNDEFINED, self.websock, KlipperValueType.PERCENTAGE)
+        self.print_completed_percent.fixed_point_decimal_places = 0
         self.print_completed_percent.set_klipper_data([ "virtual_sdcard", "progress"])
         self.controls.append(self.print_completed_percent)
 
