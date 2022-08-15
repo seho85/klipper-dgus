@@ -6,6 +6,7 @@ Usage
    :maxdepth: 2
    :caption: Contents:
 
+   general_usage/general_usage_index
    installation/installation_index
    config_files/config_files_index
-   display_masks/display_masks_index
+   

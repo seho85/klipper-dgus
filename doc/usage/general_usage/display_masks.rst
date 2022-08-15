@@ -66,5 +66,3 @@ Display Masks
     -Control Extruder FAN
     -Switch LED
     end note
-
-    
