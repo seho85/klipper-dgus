@@ -170,7 +170,7 @@ class ExtruderMask(Mask):
 
         if extruder_temp > min_extruder_temp:
 
-            gcode_cmd = f"M82\nG1 E{feed_amount_sign}{self.feed_amount_setpoint} F{self.feed_rate_setpoint*60}"
+            gcode_cmd = f"M83\nG1 E{feed_amount_sign}{self.feed_amount_setpoint} F{self.feed_rate_setpoint*60}"
 
             extruder_rpc_request = {
                 "jsonrpc": "2.0",
