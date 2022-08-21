@@ -32,7 +32,7 @@ And run the install script:
 
 .. code-block:: shell
 
-    $ ./install_for_mainsailos.sh
+    ./install_for_mainsailos.sh
 
 
 .. hint::
