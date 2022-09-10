@@ -20,6 +20,7 @@ import json
 from dgus.display.communication.communication_interface import SerialCommunication
 from dgus.display.mask import Mask
 from dgus.display.onscreen_keyboard import OnScreenKeyBoard
+import logging
 
 from controls.moonraker_data_variable import MoonrakerDataVariable
 from controls.moonraker_text_variable import MoonrakerTextVariable
@@ -55,6 +56,8 @@ class OverviewDisplayMask(Mask):
 
     state_change_pending : bool = False
     printer_state_value : PrinterState = PrinterState.UNKNOWN
+
+    _logger = logging.getLogger(__name__)
     
     def __init__(self, com_interface: SerialCommunication, websock : WebsocketInterface) -> None:
         super().__init__(0, com_interface)
@@ -172,20 +175,24 @@ class OverviewDisplayMask(Mask):
         keycode = int.from_bytes(response_payload, byteorder='big')
 
         if keycode == KeyCodes.PAUSE_PRINT:
+            self._logger.info("Pause Button Pressed...")
             self.send_pause()
 
         if keycode == KeyCodes.RESUME_PRINT:
+            self._logger.info("Resume Button Pressed...")
             self.send_resume()
 
         if keycode == KeyCodes.CANCEL_PRINT:
+            self._logger.info("Cancel Button Pressed...")
             self.send_cancel()
 
     def send_pause(self):
-
+        self._logger.debug("PrinterState: %s", self.printer_state_value)
         if self.printer_state_value == PrinterState.UNKNOWN:
             return
 
         if self.state_change_pending:
+            self._logger.debug("aborting: Last state change is still pending..")
             return
         
         if self.printer_state_value == PrinterState.PRINTING:
@@ -203,10 +210,13 @@ class OverviewDisplayMask(Mask):
 
 
     def send_resume(self):
+        self._logger.debug("PrinterState: %s", self.printer_state_value)
 
         if self.printer_state_value == PrinterState.UNKNOWN:
             return
+
         if self.state_change_pending:
+            self._logger.debug("aborting: Last state change is still pending..")
             return
         
         if self.printer_state_value == PrinterState.PAUSED:
@@ -224,10 +234,12 @@ class OverviewDisplayMask(Mask):
       
 
     def send_cancel(self):
+        self._logger.debug("PrinterState: %s", self.printer_state_value)
 
         if self.printer_state_value == PrinterState.UNKNOWN:
             return
         if self.state_change_pending:
+            self._logger.debug("aborting: Last state change is still pending..")
             return
         
         if self.printer_state_value == PrinterState.PAUSED or self.printer_state_value == PrinterState.PRINTING:
@@ -244,5 +256,6 @@ class OverviewDisplayMask(Mask):
 
 
     def printer_state_changed(self, state : PrinterState, error_msg: str):
+        self._logger.debug("PrinterState: %s", self.printer_state_value)
         self.printer_state_value = state
         self.state_change_pending = False

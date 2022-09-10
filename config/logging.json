@@ -52,6 +52,13 @@
          ],
          "propagate": false,
          "level": "INFO"
+      },
+      "overview_display_mask": {
+         "handlers": [
+            "console1"
+         ],
+         "propagate": false,
+         "level": "INFO"
       }
    },
    "handlers": {
