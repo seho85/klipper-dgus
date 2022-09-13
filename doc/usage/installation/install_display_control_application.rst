@@ -28,6 +28,15 @@ change into the directory
 
     cd klipper-dgus
 
+
+.. tip::
+    It happend multiple times in the past, that the serial port was not detected properly.
+    I recommend to remove all USB devices connected to the Klipper Hostmachine before setup.
+
+    On the *Please disconnect USB-TTL used for DGUS Display...* just press enter.
+
+    Connect the USB-TTL and continue with normal setup
+
 And run the install script:
 
 .. code-block:: shell
