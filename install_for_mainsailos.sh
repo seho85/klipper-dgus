@@ -34,7 +34,8 @@ pip3 install -r requirements.txt
 
 echo -e "\nCopying config to klipper_config"
 conf_dir=/home/$(whoami)/klipper_config/dgus_display
-cp -r config $conf_dir
+mkdir -p $conf_dir
+cp config/* $conf_dir
 
 echo -e "\nCreating systemd service (autostart)"
 

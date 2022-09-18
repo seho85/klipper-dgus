@@ -66,3 +66,15 @@ Display Masks
     -Control Extruder FAN
     -Switch LED
     end note
+
+
+.. toctree::
+      :maxdepth: 1
+      :caption: Display Masks:
+
+      display_masks/overview_mask
+      display_masks/homing_mask
+      display_masks/extruder_mask
+      display_masks/tuning_mask
+      display_masks/fan_mask
+      
