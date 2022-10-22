@@ -159,6 +159,9 @@ class WebsocketInterface(JsonSerializable):
                         self.ws_app.send(json.dumps(self._current_request.request))
                         self._current_request.request_was_send_callback()
 
+            
+            
+
             sleep(1)
 
     
@@ -179,7 +182,13 @@ class WebsocketInterface(JsonSerializable):
 
     def ws_on_close(self,ws_app, close_status, close_msg):
         self.open = False
-        #TODO: Error handling disconnected a.s.o.
+
+        self._logger.error("Websocket onClose %s, %s", close_status, close_msg)
+
+        self.cyclic_query_thread_running = False
+        self.cyclic_query_thread.join()
+
+        self.start()
 
     def ws_on_error(self, ws_app, error):
         self._logger.critical("Websockt Error %s: %s", ws_app, error)
