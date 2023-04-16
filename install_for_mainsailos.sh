@@ -33,7 +33,7 @@ echo -e "\nInstalling python dependencies"
 pip3 install -r requirements.txt
 
 echo -e "\nCopying config to klipper_config"
-conf_dir=/home/$(whoami)/klipper_config/dgus_display
+conf_dir=/home/$(whoami)/printer_data/config/dgus_display
 mkdir -p $conf_dir
 cp config/* $conf_dir
 
@@ -42,9 +42,11 @@ echo -e "\nCreating systemd service (autostart)"
 #replace variables in template
 cp klipper_dgus.service.templ klipper_dgus.service.tmp
 dgus_dir=$(pwd)
+user=$(whoami)
 #set dgus-klipper folder in service
 sed -i "s|<dgus_dir>|$dgus_dir|g" klipper_dgus.service.tmp
 sed -i "s|<config_dir>|$conf_dir|g" klipper_dgus.service.tmp
+sed -i "s|<user>|$user|g" klipper_dgus.service.tmp
 
 echo -e "\nInstalling DGUS for Klipper Service"
 sudo cp klipper_dgus.service.tmp /etc/systemd/system/klipper_dgus.service
