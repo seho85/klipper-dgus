@@ -65,6 +65,8 @@ python3 src/config_edit.py -c $conf_dir
 echo -e "\nDisplay should be available in arround 15 seconds"
 sudo systemctl start klipper_dgus
 
+echo -e "\nYou also need to include the 'dgus_display_macros.cfg' file in your printer.cfg"
+
 exit
 
 
