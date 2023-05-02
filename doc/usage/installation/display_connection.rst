@@ -86,3 +86,9 @@ Using Pi Serial interface
 
     * set *"ip": "10.0.1.69"*
 
+#) Disable Serial Console   
+
+.. code-block:: shell
+
+    git clone https://github.com/seho85/klipper-dgus.git
+
