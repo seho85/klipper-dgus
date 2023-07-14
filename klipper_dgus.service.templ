@@ -8,7 +8,7 @@ User=<user>
 Group=<user>
 Type=idle
 WorkingDirectory=<dgus_dir>
-ExecStartPre=/usr/bin/sleep 15
+ExecStartPre=python3 <dgus_dir>/Helper/sleep.py 15
 ExecStart=<dgus_dir>/venv/bin/python3 <dgus_dir>/src/main.py -c <config_dir>
 Restart=on-failure
 
